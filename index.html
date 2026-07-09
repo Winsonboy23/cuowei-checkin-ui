@@ -95,6 +95,14 @@
     }
     .thumb img { width: 100%; height: auto; display: block; border-radius: 10px; }
     .grid.mobile .thumb img { height: 100%; object-fit: contain; object-position: top center; }
+    .grid.pc .thumb {
+      padding: 14px 14px 0;
+      aspect-ratio: 1490 / 1096;      /* 統一比例框 → 電腦卡片等高、標籤對齊 */
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+    }
+    .grid.pc .thumb img { height: 100%; object-fit: contain; object-position: top center; }
     figcaption {
       display: flex; align-items: baseline; gap: 10px;
       padding: 14px 18px 16px; font-size: 14.5px;
@@ -143,7 +151,7 @@
     </p>
     <div class="meta-row">
       <span class="pill">手機版 9 頁</span>
-      <span class="pill">電腦版 12 頁</span>
+      <span class="pill">電腦版 9 頁</span>
       <span class="pill">設計預覽 · 尚未串接後端</span>
     </div>
   </header>
@@ -151,7 +159,7 @@
   <nav class="tabs">
     <div class="tabs-inner" role="tablist">
       <button class="tab" role="tab" aria-selected="true"  data-panel="mobile">手機版<span class="count">9</span></button>
-      <button class="tab" role="tab" aria-selected="false" data-panel="pc">電腦版<span class="count">12</span></button>
+      <button class="tab" role="tab" aria-selected="false" data-panel="pc">電腦版<span class="count">9</span></button>
     </div>
   </nav>
 
@@ -194,15 +202,12 @@
         ["p01", "進入頁 · 連結含訂單編號"],
         ["p02", "進入頁 · 姓名查詢"],
         ["p03", "進入頁 · 已付款"],
-        ["p04", "確認訂單"],
-        ["p05", "確認訂單 · 兩步驟"],
+        ["p04", "完成付款"],
+        ["p05", "確認訂單"],
         ["p06", "上傳旅客證件"],
-        ["p07", "完成付款"],
-        ["p08", "上傳證件 · 進度兩步"],
-        ["p09", "住宿須知"],
-        ["p10", "住宿須知 · 進度兩步"],
-        ["p11", "報到完成"],
-        ["p12", "民宿資訊"],
+        ["p07", "住宿須知"],
+        ["p08", "報到完成"],
+        ["p09", "民宿資訊"],
       ],
     };
 
