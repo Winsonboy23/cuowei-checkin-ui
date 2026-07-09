@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>厝味・九份山居 — 自助報到系統 UI 設計稿</title>
+  <style>
+    :root {
+      --bg: #f7eedd;
+      --bg-soft: #faf3e6;
+      --card: #fffdf8;
+      --ink: #3a342c;
+      --muted: #97897155;
+      --muted-text: #9b8d76;
+      --accent: #b5623c;
+      --accent-soft: #efe6d5;
+      --line: #e7dcc6;
+      --shadow: 0 18px 40px -24px rgba(88, 62, 33, .45);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: -apple-system, "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ---- Header ---- */
+    header {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 56px 24px 24px;
+    }
+    .brand { display: flex; align-items: center; gap: 14px; margin-bottom: 26px; }
+    .brand-mark {
+      width: 46px; height: 46px; border-radius: 12px;
+      background: linear-gradient(150deg, #cbb079, #b7995f);
+      color: #fff; font-weight: 700; font-size: 22px;
+      display: grid; place-items: center;
+      box-shadow: var(--shadow);
+    }
+    .brand-name { font-size: 17px; font-weight: 600; letter-spacing: .04em; }
+    .brand-sub { font-size: 13px; color: var(--muted-text); }
+
+    h1 { font-size: clamp(28px, 4.5vw, 44px); font-weight: 800; letter-spacing: .02em; line-height: 1.25; }
+    .lede { margin-top: 14px; max-width: 620px; font-size: 16px; color: #6f6350; }
+    .meta-row { margin-top: 22px; display: flex; flex-wrap: wrap; gap: 10px; }
+    .pill {
+      font-size: 13px; padding: 7px 14px; border-radius: 999px;
+      background: var(--accent-soft); color: #8a5233; font-weight: 500;
+    }
+
+    /* ---- Tabs ---- */
+    .tabs {
+      position: sticky; top: 0; z-index: 20;
+      background: color-mix(in srgb, var(--bg) 82%, transparent);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--line);
+      margin-top: 32px;
+    }
+    .tabs-inner { max-width: 1120px; margin: 0 auto; padding: 12px 24px; display: flex; gap: 8px; }
+    .tab {
+      border: 0; cursor: pointer; font: inherit; font-weight: 600; font-size: 15px;
+      padding: 9px 20px; border-radius: 999px; color: var(--muted-text);
+      background: transparent; transition: .18s;
+    }
+    .tab .count { font-size: 12px; opacity: .7; margin-left: 4px; }
+    .tab[aria-selected="true"] { background: var(--accent); color: #fff; box-shadow: var(--shadow); }
+    .tab:not([aria-selected="true"]):hover { background: var(--accent-soft); color: #8a5233; }
+
+    /* ---- Gallery ---- */
+    main { max-width: 1120px; margin: 0 auto; padding: 34px 24px 90px; }
+    .grid { display: grid; gap: 26px; }
+    .grid.mobile { grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); }
+    .grid.pc     { grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); }
+
+    .panel { display: none; }
+    .panel.active { display: block; animation: fade .35s ease; }
+    @keyframes fade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+    figure {
+      background: var(--card); border: 1px solid var(--line); border-radius: 18px;
+      overflow: hidden; cursor: zoom-in; transition: .2s; box-shadow: var(--shadow);
+    }
+    figure:hover { transform: translateY(-4px); border-color: #d9c9a6; }
+    .thumb { background: var(--bg-soft); display: grid; place-items: center; padding: 16px; }
+    .grid.mobile .thumb { padding: 20px 24px 0; }
+    .thumb img { width: 100%; height: auto; display: block; border-radius: 10px; }
+    figcaption {
+      display: flex; align-items: baseline; gap: 10px;
+      padding: 14px 18px 16px; font-size: 14.5px;
+    }
+    figcaption .no {
+      font-size: 12px; font-weight: 700; color: var(--accent);
+      background: var(--accent-soft); border-radius: 6px; padding: 2px 8px; flex: none;
+    }
+    figcaption .t { font-weight: 600; }
+
+    footer { max-width: 1120px; margin: 0 auto; padding: 0 24px 60px; color: var(--muted-text); font-size: 13px; }
+    footer hr { border: 0; border-top: 1px solid var(--line); margin-bottom: 20px; }
+
+    /* ---- Lightbox ---- */
+    .lb { position: fixed; inset: 0; z-index: 60; display: none;
+      background: rgba(42, 32, 20, .82); backdrop-filter: blur(4px);
+      align-items: center; justify-content: center; padding: 30px; }
+    .lb.open { display: flex; }
+    .lb img { max-width: 100%; max-height: 92vh; border-radius: 12px; box-shadow: 0 30px 80px -20px rgba(0,0,0,.6); }
+    .lb-close, .lb-nav {
+      position: absolute; border: 0; cursor: pointer; color: #fff;
+      background: rgba(255,255,255,.14); border-radius: 999px; width: 46px; height: 46px;
+      font-size: 22px; display: grid; place-items: center; transition: .15s;
+    }
+    .lb-close:hover, .lb-nav:hover { background: rgba(255,255,255,.28); }
+    .lb-close { top: 22px; right: 22px; }
+    .lb-nav.prev { left: 22px; top: 50%; transform: translateY(-50%); }
+    .lb-nav.next { right: 22px; top: 50%; transform: translateY(-50%); }
+    .lb-cap { position: absolute; bottom: 24px; left: 0; right: 0; text-align: center; color: #f3e9d6; font-size: 14px; }
+    @media (max-width: 560px) { .lb-nav { display: none; } }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <div class="brand-mark">厝</div>
+      <div>
+        <div class="brand-name">厝味・九份山居</div>
+        <div class="brand-sub">自助報到系統</div>
+      </div>
+    </div>
+    <h1>自助報到系統 · UI 設計稿</h1>
+    <p class="lede">
+      旅客從連結進入即可自助完成報到：確認訂單、上傳證件、同意住宿須知、線上付款，
+      完成後直接取得大門與房門密碼。以下為手機版與電腦版的完整流程畫面。
+    </p>
+    <div class="meta-row">
+      <span class="pill">手機版 9 頁</span>
+      <span class="pill">電腦版 12 頁</span>
+      <span class="pill">設計預覽 · 尚未串接後端</span>
+    </div>
+  </header>
+
+  <nav class="tabs">
+    <div class="tabs-inner" role="tablist">
+      <button class="tab" role="tab" aria-selected="true"  data-panel="mobile">手機版<span class="count">9</span></button>
+      <button class="tab" role="tab" aria-selected="false" data-panel="pc">電腦版<span class="count">12</span></button>
+    </div>
+  </nav>
+
+  <main>
+    <section class="panel active" id="panel-mobile">
+      <div class="grid mobile" id="grid-mobile"></div>
+    </section>
+    <section class="panel" id="panel-pc">
+      <div class="grid pc" id="grid-pc"></div>
+    </section>
+  </main>
+
+  <footer>
+    <hr />
+    厝味・九份山居 — 自助報到系統 UI 設計稿 · 本頁僅供業者預覽，畫面與資料為示意。
+  </footer>
+
+  <div class="lb" id="lb" aria-hidden="true">
+    <button class="lb-close" id="lbClose" aria-label="關閉">✕</button>
+    <button class="lb-nav prev" id="lbPrev" aria-label="上一張">‹</button>
+    <img id="lbImg" alt="" />
+    <button class="lb-nav next" id="lbNext" aria-label="下一張">›</button>
+    <div class="lb-cap" id="lbCap"></div>
+  </div>
+
+  <script>
+    const DATA = {
+      mobile: [
+        ["m01", "進入頁 · 連結含訂單編號"],
+        ["m02", "進入頁 · 姓名查詢"],
+        ["m03", "進入頁 · 已付款"],
+        ["m04", "完成付款"],
+        ["m05", "確認訂單"],
+        ["m06", "上傳旅客證件"],
+        ["m07", "住宿須知"],
+        ["m08", "報到完成"],
+        ["m09", "民宿資訊"],
+      ],
+      pc: [
+        ["p01", "進入頁 · 連結含訂單編號"],
+        ["p02", "進入頁 · 姓名查詢"],
+        ["p03", "進入頁 · 已付款"],
+        ["p04", "確認訂單"],
+        ["p05", "確認訂單 · 兩步驟"],
+        ["p06", "上傳旅客證件"],
+        ["p07", "完成付款"],
+        ["p08", "上傳證件 · 進度兩步"],
+        ["p09", "住宿須知"],
+        ["p10", "住宿須知 · 進度兩步"],
+        ["p11", "報到完成"],
+        ["p12", "民宿資訊"],
+      ],
+    };
+
+    // Flat list for lightbox navigation, tracks which panel is active
+    function buildGrid(kind) {
+      const grid = document.getElementById("grid-" + kind);
+      DATA[kind].forEach(([id, title], i) => {
+        const fig = document.createElement("figure");
+        fig.innerHTML =
+          '<div class="thumb"><img loading="lazy" src="assets/' + kind + '/' + id +
+          '.png" alt="' + title + '"></div>' +
+          '<figcaption><span class="no">' + String(i + 1).padStart(2, "0") +
+          '</span><span class="t">' + title + '</span></figcaption>';
+        fig.addEventListener("click", () => openLb(kind, i));
+        grid.appendChild(fig);
+      });
+    }
+    buildGrid("mobile");
+    buildGrid("pc");
+
+    // Tabs
+    let current = "mobile";
+    document.querySelectorAll(".tab").forEach((tab) => {
+      tab.addEventListener("click", () => {
+        current = tab.dataset.panel;
+        document.querySelectorAll(".tab").forEach((t) =>
+          t.setAttribute("aria-selected", t === tab));
+        document.querySelectorAll(".panel").forEach((p) =>
+          p.classList.toggle("active", p.id === "panel-" + current));
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      });
+    });
+
+    // Lightbox
+    const lb = document.getElementById("lb");
+    const lbImg = document.getElementById("lbImg");
+    const lbCap = document.getElementById("lbCap");
+    let lbKind = "mobile", lbIdx = 0;
+
+    function openLb(kind, i) { lbKind = kind; lbIdx = i; render(); lb.classList.add("open"); lb.setAttribute("aria-hidden", "false"); }
+    function closeLb() { lb.classList.remove("open"); lb.setAttribute("aria-hidden", "true"); }
+    function step(d) { const list = DATA[lbKind]; lbIdx = (lbIdx + d + list.length) % list.length; render(); }
+    function render() {
+      const [id, title] = DATA[lbKind][lbIdx];
+      lbImg.src = "assets/" + lbKind + "/" + id + ".png";
+      lbImg.alt = title;
+      lbCap.textContent = (lbIdx + 1) + " / " + DATA[lbKind].length + " · " + title;
+    }
+
+    document.getElementById("lbClose").addEventListener("click", closeLb);
+    document.getElementById("lbPrev").addEventListener("click", (e) => { e.stopPropagation(); step(-1); });
+    document.getElementById("lbNext").addEventListener("click", (e) => { e.stopPropagation(); step(1); });
+    lb.addEventListener("click", (e) => { if (e.target === lb) closeLb(); });
+    document.addEventListener("keydown", (e) => {
+      if (!lb.classList.contains("open")) return;
+      if (e.key === "Escape") closeLb();
+      if (e.key === "ArrowLeft") step(-1);
+      if (e.key === "ArrowRight") step(1);
+    });
+  </script>
+</body>
+</html>
