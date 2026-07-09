@@ -1,6 +1,0 @@
-.git
-.claude
-*.zip
-**/.DS_Store
-Dockerfile
-.dockerignore
