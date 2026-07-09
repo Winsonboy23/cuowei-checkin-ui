@@ -95,7 +95,7 @@
   /* --- 返回連結（右上） --- */
   .sg-topbar {
     display: flex;
-    justify-content: flex-end;
+    justify-content: flex-start;
     margin-bottom: var(--ds-space-8);
   }
   .sg-back {
@@ -478,7 +478,7 @@
   <main class="sg-main">
 
     <div class="sg-topbar">
-      <a class="sg-back" href="../index.html">← 設計預覽</a>
+      <a class="sg-back" href="../index.html" onclick="if (history.length > 1) { history.back(); return false; }">← 返回上一頁</a>
     </div>
 
     <!-- ---------- 封面 ---------- -->
