@@ -86,8 +86,15 @@
     }
     figure:hover { transform: translateY(-4px); border-color: #d9c9a6; }
     .thumb { background: var(--bg-soft); display: grid; place-items: center; padding: 16px; }
-    .grid.mobile .thumb { padding: 20px 24px 0; }
+    .grid.mobile .thumb {
+      padding: 16px 16px 0;
+      aspect-ratio: 39 / 84;          /* 統一比例框 → 手機卡片等高、標籤對齊 */
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+    }
     .thumb img { width: 100%; height: auto; display: block; border-radius: 10px; }
+    .grid.mobile .thumb img { height: 100%; object-fit: contain; object-position: top center; }
     figcaption {
       display: flex; align-items: baseline; gap: 10px;
       padding: 14px 18px 16px; font-size: 14.5px;
