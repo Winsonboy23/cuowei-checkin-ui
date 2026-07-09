@@ -1,0 +1,1771 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>厝味・九份山居 — 設計系統 Style Guide</title>
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="components.css">
+<style>
+  /* ============================================================
+     Style guide 頁面 chrome（僅供本文件排版，沿用 --ds-* 變數）
+     ============================================================ */
+  * { box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    margin: 0;
+    background-color: var(--ds-color-bg);
+    color: var(--ds-color-ink);
+    font-family: var(--ds-font-sans);
+    font-size: var(--ds-text-body);
+    line-height: var(--ds-text-body-lh);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  a { color: var(--ds-color-primary); }
+
+  /* --- 版面：側欄 + 主內容 --- */
+  .sg-layout { display: flex; align-items: flex-start; }
+
+  .sg-sidebar {
+    position: sticky;
+    top: 0;
+    flex: none;
+    width: 264px;
+    height: 100vh;
+    overflow-y: auto;
+    padding: var(--ds-space-8) var(--ds-space-6);
+    background-color: var(--ds-color-surface);
+    border-right: 1px solid var(--ds-color-border);
+  }
+
+  .sg-sidebar__brand {
+    display: flex;
+    align-items: center;
+    gap: var(--ds-space-3);
+    margin-bottom: var(--ds-space-8);
+  }
+  .sg-sidebar__brandtext { min-width: 0; }
+  .sg-sidebar__brandname {
+    font-family: var(--ds-font-serif);
+    font-size: var(--ds-text-h3);
+    font-weight: 700;
+    line-height: 1.3;
+  }
+  .sg-sidebar__brandsub {
+    font-size: var(--ds-text-caption);
+    letter-spacing: var(--ds-text-caption-tracking);
+    color: var(--ds-color-ink-muted);
+  }
+
+  .sg-nav { display: flex; flex-direction: column; gap: var(--ds-space-1); }
+  .sg-nav__section {
+    margin-top: var(--ds-space-5);
+    margin-bottom: var(--ds-space-2);
+    padding-left: var(--ds-space-2);
+    font-size: var(--ds-text-caption);
+    letter-spacing: var(--ds-text-caption-tracking);
+    text-transform: uppercase;
+    color: var(--ds-color-ink-muted);
+  }
+  .sg-nav a {
+    display: block;
+    padding: var(--ds-space-2) var(--ds-space-3);
+    border-radius: var(--ds-radius-sm);
+    color: var(--ds-color-ink-secondary);
+    text-decoration: none;
+    font-size: var(--ds-text-body-sm);
+    transition: background-color var(--ds-dur) var(--ds-ease), color var(--ds-dur) var(--ds-ease);
+  }
+  .sg-nav a:hover {
+    background-color: var(--ds-color-primary-soft);
+    color: var(--ds-color-primary);
+  }
+
+  .sg-main {
+    flex: 1;
+    min-width: 0;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: var(--ds-space-10) var(--ds-space-10) var(--ds-space-16);
+  }
+
+  /* --- 返回連結（右上） --- */
+  .sg-topbar {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: var(--ds-space-8);
+  }
+  .sg-back {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--ds-space-2);
+    padding: var(--ds-space-2) var(--ds-space-4);
+    background-color: var(--ds-color-surface);
+    border: 1px solid var(--ds-color-border);
+    border-radius: var(--ds-radius-pill);
+    color: var(--ds-color-ink-secondary);
+    text-decoration: none;
+    font-size: var(--ds-text-body-sm);
+    font-weight: 600;
+    transition: border-color var(--ds-dur) var(--ds-ease), color var(--ds-dur) var(--ds-ease);
+  }
+  .sg-back:hover { border-color: var(--ds-color-primary); color: var(--ds-color-primary); }
+
+  /* --- 區塊 --- */
+  .sg-section { margin-bottom: var(--ds-space-16); scroll-margin-top: var(--ds-space-6); }
+  .sg-section__head { margin-bottom: var(--ds-space-6); }
+  .sg-section__kicker {
+    font-size: var(--ds-text-caption);
+    letter-spacing: var(--ds-text-caption-tracking);
+    text-transform: uppercase;
+    color: var(--ds-color-primary);
+    font-weight: 600;
+  }
+  .sg-h2 {
+    margin: var(--ds-space-2) 0 var(--ds-space-3);
+    font-family: var(--ds-font-serif);
+    font-size: var(--ds-text-h1);
+    line-height: var(--ds-text-h1-lh);
+    font-weight: 700;
+  }
+  .sg-section__desc {
+    max-width: 62ch;
+    color: var(--ds-color-ink-secondary);
+    font-size: var(--ds-text-body-sm);
+  }
+
+  .sg-subhead {
+    margin: var(--ds-space-8) 0 var(--ds-space-4);
+    font-family: var(--ds-font-serif);
+    font-size: var(--ds-text-h2);
+    font-weight: 600;
+  }
+
+  /* --- 元件展示台 --- */
+  .sg-specimen {
+    margin-bottom: var(--ds-space-6);
+    background-color: var(--ds-color-surface);
+    border: 1px solid var(--ds-color-border);
+    border-radius: var(--ds-radius-xl);
+    overflow: hidden;
+    box-shadow: var(--ds-shadow-sm);
+  }
+  .sg-specimen__title {
+    display: flex;
+    align-items: baseline;
+    gap: var(--ds-space-3);
+    padding: var(--ds-space-4) var(--ds-space-5);
+    border-bottom: 1px solid var(--ds-color-border);
+  }
+  .sg-specimen__name {
+    font-family: var(--ds-font-mono);
+    font-size: var(--ds-text-code);
+    font-weight: 600;
+    color: var(--ds-color-primary);
+  }
+  .sg-specimen__desc {
+    font-size: var(--ds-text-body-sm);
+    color: var(--ds-color-ink-secondary);
+  }
+  .sg-preview {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--ds-space-4);
+    padding: var(--ds-space-8) var(--ds-space-6);
+    background-color: var(--ds-color-bg-sunken);
+  }
+  .sg-preview--stack { flex-direction: column; align-items: stretch; }
+  .sg-preview--narrow > * { max-width: 420px; margin-inline: auto; width: 100%; }
+
+  /* --- 程式碼片段 + 複製 --- */
+  .sg-code { position: relative; border-top: 1px solid var(--ds-color-border); }
+  .sg-code pre {
+    margin: 0;
+    padding: var(--ds-space-5);
+    padding-right: var(--ds-space-16);
+    overflow-x: auto;
+    background-color: var(--ds-color-surface);
+  }
+  .sg-code code {
+    font-family: var(--ds-font-mono);
+    font-size: var(--ds-text-body-sm);
+    line-height: 1.7;
+    color: var(--ds-color-ink);
+    white-space: pre;
+  }
+  .sg-copy {
+    position: absolute;
+    top: var(--ds-space-3);
+    right: var(--ds-space-3);
+    padding: var(--ds-space-1) var(--ds-space-3);
+    background-color: var(--ds-color-chip-bg);
+    border: 1px solid var(--ds-color-border);
+    border-radius: var(--ds-radius-pill);
+    color: var(--ds-color-ink-secondary);
+    font-family: var(--ds-font-sans);
+    font-size: var(--ds-text-caption);
+    font-weight: 600;
+    letter-spacing: var(--ds-text-caption-tracking);
+    cursor: pointer;
+    transition: background-color var(--ds-dur) var(--ds-ease), color var(--ds-dur) var(--ds-ease);
+  }
+  .sg-copy:hover { background-color: var(--ds-color-primary-soft); color: var(--ds-color-primary); }
+  .sg-copy.is-copied { background-color: var(--ds-color-success-bg); color: var(--ds-color-success-ink); }
+
+  /* --- 色彩票卡 --- */
+  .sg-swatch-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: var(--ds-space-4);
+  }
+  .sg-swatch {
+    background-color: var(--ds-color-surface);
+    border: 1px solid var(--ds-color-border);
+    border-radius: var(--ds-radius-lg);
+    overflow: hidden;
+    box-shadow: var(--ds-shadow-sm);
+  }
+  .sg-swatch__chip {
+    height: 92px;
+    border-bottom: 1px solid var(--ds-color-border);
+  }
+  .sg-swatch__body { padding: var(--ds-space-4); }
+  .sg-swatch__token {
+    font-family: var(--ds-font-mono);
+    font-size: var(--ds-text-body-sm);
+    font-weight: 600;
+    color: var(--ds-color-ink);
+    word-break: break-all;
+  }
+  .sg-swatch__hex {
+    margin-top: var(--ds-space-1);
+    font-family: var(--ds-font-mono);
+    font-size: var(--ds-text-caption);
+    color: var(--ds-color-ink-muted);
+    text-transform: uppercase;
+  }
+  .sg-swatch__role {
+    margin-top: var(--ds-space-2);
+    font-size: var(--ds-text-caption);
+    line-height: 1.5;
+    color: var(--ds-color-ink-secondary);
+  }
+  .sg-swatch--checker .sg-swatch__chip {
+    background-image:
+      linear-gradient(45deg, var(--ds-color-border) 25%, transparent 25%),
+      linear-gradient(-45deg, var(--ds-color-border) 25%, transparent 25%),
+      linear-gradient(45deg, transparent 75%, var(--ds-color-border) 75%),
+      linear-gradient(-45deg, transparent 75%, var(--ds-color-border) 75%);
+    background-size: 16px 16px;
+    background-position: 0 0, 0 8px, 8px -8px, -8px 0;
+  }
+
+  /* --- 字體排印 --- */
+  .sg-type-row {
+    display: grid;
+    grid-template-columns: 1fr 200px;
+    gap: var(--ds-space-6);
+    align-items: baseline;
+    padding: var(--ds-space-5) 0;
+    border-bottom: 1px solid var(--ds-color-border);
+  }
+  .sg-type-row:last-child { border-bottom: none; }
+  .sg-type-spec {
+    font-family: var(--ds-font-mono);
+    font-size: var(--ds-text-caption);
+    line-height: 1.7;
+    color: var(--ds-color-ink-muted);
+  }
+  .sg-type-spec b {
+    display: block;
+    color: var(--ds-color-primary);
+    font-size: var(--ds-text-body-sm);
+    text-transform: none;
+  }
+
+  .sg-family-card {
+    padding: var(--ds-space-5);
+    background-color: var(--ds-color-surface);
+    border: 1px solid var(--ds-color-border);
+    border-radius: var(--ds-radius-lg);
+  }
+  .sg-family-card + .sg-family-card { margin-top: var(--ds-space-4); }
+  .sg-family-card__meta {
+    font-family: var(--ds-font-mono);
+    font-size: var(--ds-text-caption);
+    color: var(--ds-color-ink-muted);
+    margin-bottom: var(--ds-space-3);
+  }
+
+  /* --- 間距 / 圓角 / 陰影 --- */
+  .sg-token-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: var(--ds-space-4);
+  }
+  .sg-token-card {
+    padding: var(--ds-space-4);
+    background-color: var(--ds-color-surface);
+    border: 1px solid var(--ds-color-border);
+    border-radius: var(--ds-radius-lg);
+  }
+  .sg-token-card__name {
+    font-family: var(--ds-font-mono);
+    font-size: var(--ds-text-body-sm);
+    font-weight: 600;
+    color: var(--ds-color-ink);
+  }
+  .sg-token-card__val {
+    font-family: var(--ds-font-mono);
+    font-size: var(--ds-text-caption);
+    color: var(--ds-color-ink-muted);
+  }
+  .sg-space-bar {
+    height: 16px;
+    margin-top: var(--ds-space-3);
+    border-radius: var(--ds-radius-sm);
+    background-color: var(--ds-color-primary);
+  }
+  .sg-radius-demo {
+    height: 72px;
+    margin-top: var(--ds-space-3);
+    background-color: var(--ds-color-primary-soft);
+    border: 2px solid var(--ds-color-primary);
+  }
+  .sg-shadow-demo {
+    height: 72px;
+    margin: var(--ds-space-3) var(--ds-space-2) var(--ds-space-2);
+    border-radius: var(--ds-radius-md);
+    background-color: var(--ds-color-surface);
+  }
+
+  /* --- 情境範例外框（模擬手機畫面） --- */
+  .sg-scenario-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: var(--ds-space-6);
+  }
+  .sg-phone {
+    background-color: var(--ds-color-surface-raised);
+    border: 1px solid var(--ds-color-border);
+    border-radius: var(--ds-radius-2xl);
+    box-shadow: var(--ds-shadow-raised);
+    overflow: hidden;
+  }
+  .sg-phone__body {
+    padding: var(--ds-space-5);
+    background-color: var(--ds-color-bg);
+  }
+  .sg-scenario-caption {
+    margin-top: var(--ds-space-3);
+    text-align: center;
+    font-size: var(--ds-text-body-sm);
+    color: var(--ds-color-ink-secondary);
+  }
+
+  .sg-note {
+    margin-top: var(--ds-space-4);
+    font-size: var(--ds-text-caption);
+    color: var(--ds-color-ink-muted);
+    letter-spacing: var(--ds-text-caption-tracking);
+  }
+
+  /* --- 封面 --- */
+  .sg-cover {
+    position: relative;
+    padding: var(--ds-space-16) var(--ds-space-10);
+    margin-bottom: var(--ds-space-16);
+    border-radius: var(--ds-radius-2xl);
+    background-image: linear-gradient(160deg, var(--ds-color-hero-from), var(--ds-color-hero-to));
+    box-shadow: var(--ds-shadow-card);
+    overflow: hidden;
+  }
+  .sg-cover__inner { position: relative; z-index: 1; color: var(--ds-color-on-primary); }
+  .sg-cover::after {
+    content: "";
+    position: absolute; inset: 0;
+    background-image: linear-gradient(to top, var(--ds-color-hero-scrim), transparent 70%);
+  }
+  .sg-cover__eyebrow {
+    font-size: var(--ds-text-caption);
+    letter-spacing: var(--ds-text-caption-tracking);
+    text-transform: uppercase;
+    opacity: .85;
+  }
+  .sg-cover__title {
+    margin: var(--ds-space-3) 0;
+    font-family: var(--ds-font-serif);
+    font-size: var(--ds-text-display);
+    line-height: var(--ds-text-display-lh);
+    font-weight: 700;
+  }
+  .sg-cover__tagline {
+    max-width: 46ch;
+    font-size: var(--ds-text-body);
+    opacity: .92;
+  }
+  .sg-cover__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--ds-space-3);
+    margin-top: var(--ds-space-6);
+  }
+  .sg-cover__pill {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--ds-space-2);
+    padding: var(--ds-space-2) var(--ds-space-4);
+    background-color: var(--ds-color-on-primary-soft);
+    border-radius: var(--ds-radius-pill);
+    font-family: var(--ds-font-mono);
+    font-size: var(--ds-text-body-sm);
+    font-weight: 600;
+  }
+
+  @media (max-width: 860px) {
+    .sg-sidebar { display: none; }
+    .sg-main { padding: var(--ds-space-6) var(--ds-space-5) var(--ds-space-12); }
+    .sg-type-row { grid-template-columns: 1fr; gap: var(--ds-space-2); }
+    .sg-cover { padding: var(--ds-space-10) var(--ds-space-6); }
+  }
+</style>
+</head>
+<body>
+<div class="sg-layout">
+
+  <!-- ===================== 側欄導覽 ===================== -->
+  <aside class="sg-sidebar">
+    <div class="sg-sidebar__brand">
+      <span class="ds-brandmark">厝</span>
+      <span class="sg-sidebar__brandtext">
+        <span class="sg-sidebar__brandname">厝味・九份山居</span>
+        <span class="sg-sidebar__brandsub">DESIGN SYSTEM · v1</span>
+      </span>
+    </div>
+    <nav class="sg-nav">
+      <a href="#cover">封面 Overview</a>
+      <div class="sg-nav__section">基礎 Foundations</div>
+      <a href="#color">色彩 Color</a>
+      <a href="#type">字體排印 Type</a>
+      <a href="#space">間距 Space</a>
+      <a href="#radius">圓角 Radius</a>
+      <a href="#shadow">陰影 Shadow</a>
+      <div class="sg-nav__section">元件 Components</div>
+      <a href="#c-button">按鈕 Button</a>
+      <a href="#c-card">卡片 Card</a>
+      <a href="#c-chip">標籤 Chip · Badge</a>
+      <a href="#c-field">欄位 Field</a>
+      <a href="#c-option">選項 Option</a>
+      <a href="#c-stepper">步驟 Stepper</a>
+      <a href="#c-checklist">清單 Checklist</a>
+      <a href="#c-summary">摘要 Summary · Price</a>
+      <a href="#c-header">頁首 Header · Hero</a>
+      <a href="#c-upload">上傳 Upload</a>
+      <a href="#c-doorcode">密碼卡 Doorcode</a>
+      <a href="#c-infolist">資訊列 · Notice</a>
+      <a href="#c-contact">聯絡 · Lang</a>
+      <div class="sg-nav__section">組合 Patterns</div>
+      <a href="#p-order">確認訂單卡</a>
+      <a href="#p-success">報到成功密碼卡</a>
+    </nav>
+  </aside>
+
+  <!-- ===================== 主內容 ===================== -->
+  <main class="sg-main">
+
+    <div class="sg-topbar">
+      <a class="sg-back" href="../index.html">← 設計預覽</a>
+    </div>
+
+    <!-- ---------- 封面 ---------- -->
+    <section id="cover" class="sg-cover">
+      <div class="sg-cover__inner">
+        <div class="sg-cover__eyebrow">Self check-in system · living style guide</div>
+        <h1 class="sg-cover__title">厝味・九份山居<br>自助報到系統</h1>
+        <p class="sg-cover__tagline">讓山城旅人在抵達前就完成報到 —— 一套溫暖、可信賴、以中文為主的自助入住介面設計系統。</p>
+        <div class="sg-cover__meta">
+          <span class="sg-cover__pill">版本 v1</span>
+          <span class="sg-cover__pill">2 檔案 · tokens + components</span>
+          <span class="sg-cover__pill">淺色單一主題</span>
+        </div>
+      </div>
+    </section>
+
+    <p class="sg-section__desc" style="margin-bottom: var(--ds-space-16);">
+      本頁是「活文件」：左側每一色票、每一字級、每一個元件皆由
+      <code style="font-family: var(--ds-font-mono);">tokens.css</code> 與
+      <code style="font-family: var(--ds-font-mono);">components.css</code> 即時渲染。
+      調整這兩個檔案，本頁與整個報到系統會一起更新 —— 這裡是唯一真實來源的展示窗。
+    </p>
+
+    <!-- ---------- 色彩 ---------- -->
+    <section id="color" class="sg-section">
+      <div class="sg-section__head">
+        <div class="sg-section__kicker">Foundations · 01</div>
+        <h2 class="sg-h2">色彩 Color</h2>
+        <p class="sg-section__desc">暖米白為底、赭紅為重點色，文字採深褐非純黑。語意色僅有成功綠一組（報到情境無錯誤破壞性狀態）。所有顏色一律以 <code style="font-family:var(--ds-font-mono)">--ds-color-*</code> 取用。</p>
+      </div>
+
+      <h3 class="sg-subhead">表面與背景 Surface</h3>
+      <div class="sg-swatch-grid">
+        <div class="sg-swatch">
+          <div class="sg-swatch__chip" style="background-color: var(--ds-color-bg);"></div>
+          <div class="sg-swatch__body">
+            <div class="sg-swatch__token">--ds-color-bg</div>
+            <div class="sg-swatch__hex">#F6F0E4</div>
+            <div class="sg-swatch__role">頁面背景（暖米白）</div>
+          </div>
+        </div>
+        <div class="sg-swatch">
+          <div class="sg-swatch__chip" style="background-color: var(--ds-color-bg-sunken);"></div>
+          <div class="sg-swatch__body">
+            <div class="sg-swatch__token">--ds-color-bg-sunken</div>
+            <div class="sg-swatch__hex">#EFE6D6</div>
+            <div class="sg-swatch__role">內凹面板 / 金額摘要底 / 訂單摘要內層</div>
+          </div>
+        </div>
+        <div class="sg-swatch">
+          <div class="sg-swatch__chip" style="background-color: var(--ds-color-surface);"></div>
+          <div class="sg-swatch__body">
+            <div class="sg-swatch__token">--ds-color-surface</div>
+            <div class="sg-swatch__hex">#FDFBF5</div>
+            <div class="sg-swatch__role">卡片 / 主要表面（暖白）</div>
+          </div>
+        </div>
+        <div class="sg-swatch">
+          <div class="sg-swatch__chip" style="background-color: var(--ds-color-surface-raised);"></div>
+          <div class="sg-swatch__body">
+            <div class="sg-swatch__token">--ds-color-surface-raised</div>
+            <div class="sg-swatch__hex">#FFFFFF</div>
+            <div class="sg-swatch__role">浮起表面（少用純白，如瀏覽器框）</div>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="sg-subhead">文字 Ink</h3>
+      <div class="sg-swatch-grid">
+        <div class="sg-swatch">
+          <div class="sg-swatch__chip" style="background-color: var(--ds-color-ink);"></div>
+          <div class="sg-swatch__body">
+            <div class="sg-swatch__token">--ds-color-ink</div>
+            <div class="sg-swatch__hex">#33291D</div>
+            <div class="sg-swatch__role">主要文字（深褐，非純黑）</div>
+          </div>
+        </div>
+        <div class="sg-swatch">
+          <div class="sg-swatch__chip" style="background-color: var(--ds-color-ink-secondary);"></div>
+          <div class="sg-swatch__body">
+            <div class="sg-swatch__token">--ds-color-ink-secondary</div>
+            <div class="sg-swatch__hex">#6E6150</div>
+            <div class="sg-swatch__role">次要文字 / 說明</div>
+          </div>
+        </div>
+        <div class="sg-swatch">
+          <div class="sg-swatch__chip" style="background-color: var(--ds-color-ink-muted);"></div>
+          <div class="sg-swatch__body">
+            <div class="sg-swatch__token">--ds-color-ink-muted</div>
+            <div class="sg-swatch__hex">#756848</div>
+            <div class="sg-swatch__role">淡色文字 / placeholder / footer（已加深達 AA）</div>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="sg-subhead">主色 赭紅 Primary</h3>
+      <div class="sg-swatch-grid">
+        <div class="sg-swatch">
+          <div class="sg-swatch__chip" style="background-color: var(--ds-color-primary);"></div>
+          <div class="sg-swatch__body">
+            <div class="sg-swatch__token">--ds-color-primary</div>
+            <div class="sg-swatch__hex">#AE5A36</div>
+            <div class="sg-swatch__role">主色赭紅（填色 / CTA / 大字）：白字達 AA</div>
+          </div>
+        </div>
+        <div class="sg-swatch">
+          <div class="sg-swatch__chip" style="background-color: var(--ds-color-primary-hover);"></div>
+          <div class="sg-swatch__body">
+            <div class="sg-swatch__token">--ds-color-primary-hover</div>
+            <div class="sg-swatch__hex">#99492A</div>
+            <div class="sg-swatch__role">主色 hover</div>
+          </div>
+        </div>
+        <div class="sg-swatch">
+          <div class="sg-swatch__chip" style="background-color: var(--ds-color-primary-active);"></div>
+          <div class="sg-swatch__body">
+            <div class="sg-swatch__token">--ds-color-primary-active</div>
+            <div class="sg-swatch__hex">#833C22</div>
+            <div class="sg-swatch__role">主色 pressed</div>
+          </div>
+        </div>
+        <div class="sg-swatch">
+          <div class="sg-swatch__chip" style="background-color: var(--ds-color-primary-ink);"></div>
+          <div class="sg-swatch__body">
+            <div class="sg-swatch__token">--ds-color-primary-ink</div>
+            <div class="sg-swatch__hex">#8C4526</div>
+            <div class="sg-swatch__role">主色文字版：小字赭紅（訂單編號 / 連結 / 編號圈）達 AA</div>
+          </div>
+        </div>
+        <div class="sg-swatch">
+          <div class="sg-swatch__chip" style="background-color: var(--ds-color-primary-soft);"></div>
+          <div class="sg-swatch__body">
+            <div class="sg-swatch__token">--ds-color-primary-soft</div>
+            <div class="sg-swatch__hex">#F6E9DD</div>
+            <div class="sg-swatch__role">主色淡底：被選取的選項底、focus 前景</div>
+          </div>
+        </div>
+        <div class="sg-swatch">
+          <div class="sg-swatch__chip" style="background-color: var(--ds-color-on-primary);"></div>
+          <div class="sg-swatch__body">
+            <div class="sg-swatch__token">--ds-color-on-primary</div>
+            <div class="sg-swatch__hex">#FFFFFF</div>
+            <div class="sg-swatch__role">主色上的文字</div>
+          </div>
+        </div>
+        <div class="sg-swatch sg-swatch--checker">
+          <div class="sg-swatch__chip" style="background-color: var(--ds-color-on-primary-soft);"></div>
+          <div class="sg-swatch__body">
+            <div class="sg-swatch__token">--ds-color-on-primary-soft</div>
+            <div class="sg-swatch__hex">rgba(255,255,255,.18)</div>
+            <div class="sg-swatch__role">主色上的半透明白（on-primary 徽章底）</div>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="sg-subhead">裝飾與標籤 Accent · Chip</h3>
+      <div class="sg-swatch-grid">
+        <div class="sg-swatch">
+          <div class="sg-swatch__chip" style="background-color: var(--ds-color-accent-tan);"></div>
+          <div class="sg-swatch__body">
+            <div class="sg-swatch__token">--ds-color-accent-tan</div>
+            <div class="sg-swatch__hex">#C6B08A</div>
+            <div class="sg-swatch__role">tan 裝飾：logo 方塊、hero 中間調、房型圖示</div>
+          </div>
+        </div>
+        <div class="sg-swatch">
+          <div class="sg-swatch__chip" style="background-color: var(--ds-color-chip-bg);"></div>
+          <div class="sg-swatch__body">
+            <div class="sg-swatch__token">--ds-color-chip-bg</div>
+            <div class="sg-swatch__hex">#ECE3D1</div>
+            <div class="sg-swatch__role">標籤 / chip 底</div>
+          </div>
+        </div>
+        <div class="sg-swatch">
+          <div class="sg-swatch__chip" style="background-color: var(--ds-color-chip-ink);"></div>
+          <div class="sg-swatch__body">
+            <div class="sg-swatch__token">--ds-color-chip-ink</div>
+            <div class="sg-swatch__hex">#6E6150</div>
+            <div class="sg-swatch__role">標籤文字</div>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="sg-subhead">語意 · 成功 Success</h3>
+      <div class="sg-swatch-grid">
+        <div class="sg-swatch">
+          <div class="sg-swatch__chip" style="background-color: var(--ds-color-success);"></div>
+          <div class="sg-swatch__body">
+            <div class="sg-swatch__token">--ds-color-success</div>
+            <div class="sg-swatch__hex">#5F7A4E</div>
+            <div class="sg-swatch__role">成功綠：報到成功勾勾、已付清、已上傳</div>
+          </div>
+        </div>
+        <div class="sg-swatch">
+          <div class="sg-swatch__chip" style="background-color: var(--ds-color-success-bg);"></div>
+          <div class="sg-swatch__body">
+            <div class="sg-swatch__token">--ds-color-success-bg</div>
+            <div class="sg-swatch__hex">#E8EFDB</div>
+            <div class="sg-swatch__role">成功淺綠底（徽章 / 橫幅）</div>
+          </div>
+        </div>
+        <div class="sg-swatch">
+          <div class="sg-swatch__chip" style="background-color: var(--ds-color-success-ink);"></div>
+          <div class="sg-swatch__body">
+            <div class="sg-swatch__token">--ds-color-success-ink</div>
+            <div class="sg-swatch__hex">#4C6539</div>
+            <div class="sg-swatch__role">成功文字</div>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="sg-subhead">邊框 · Hero · Focus</h3>
+      <div class="sg-swatch-grid">
+        <div class="sg-swatch">
+          <div class="sg-swatch__chip" style="background-color: var(--ds-color-border);"></div>
+          <div class="sg-swatch__body">
+            <div class="sg-swatch__token">--ds-color-border</div>
+            <div class="sg-swatch__hex">#E7DBC5</div>
+            <div class="sg-swatch__role">一般邊框 / 分隔線</div>
+          </div>
+        </div>
+        <div class="sg-swatch">
+          <div class="sg-swatch__chip" style="background-color: var(--ds-color-border-strong);"></div>
+          <div class="sg-swatch__body">
+            <div class="sg-swatch__token">--ds-color-border-strong</div>
+            <div class="sg-swatch__hex">#D8C8A9</div>
+            <div class="sg-swatch__role">較明顯邊框 / hover 邊框</div>
+          </div>
+        </div>
+        <div class="sg-swatch">
+          <div class="sg-swatch__chip" style="background-color: var(--ds-color-hero-from);"></div>
+          <div class="sg-swatch__body">
+            <div class="sg-swatch__token">--ds-color-hero-from</div>
+            <div class="sg-swatch__hex">#C6B08A</div>
+            <div class="sg-swatch__role">hero 漸層上緣（tan）</div>
+          </div>
+        </div>
+        <div class="sg-swatch">
+          <div class="sg-swatch__chip" style="background-color: var(--ds-color-hero-to);"></div>
+          <div class="sg-swatch__body">
+            <div class="sg-swatch__token">--ds-color-hero-to</div>
+            <div class="sg-swatch__hex">#2A2114</div>
+            <div class="sg-swatch__role">hero 漸層下緣（深褐）</div>
+          </div>
+        </div>
+        <div class="sg-swatch sg-swatch--checker">
+          <div class="sg-swatch__chip" style="background-color: var(--ds-color-hero-scrim);"></div>
+          <div class="sg-swatch__body">
+            <div class="sg-swatch__token">--ds-color-hero-scrim</div>
+            <div class="sg-swatch__hex">rgba(42,33,20,.65)</div>
+            <div class="sg-swatch__role">hero 底部覆蓋層（確保白字可讀）</div>
+          </div>
+        </div>
+        <div class="sg-swatch sg-swatch--checker">
+          <div class="sg-swatch__chip" style="background-color: var(--ds-focus-ring);"></div>
+          <div class="sg-swatch__body">
+            <div class="sg-swatch__token">--ds-focus-ring</div>
+            <div class="sg-swatch__hex">rgba(174,90,54,.35)</div>
+            <div class="sg-swatch__role">focus 外環（半透明赭紅）</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------- 字體排印 ---------- -->
+    <section id="type" class="sg-section">
+      <div class="sg-section__head">
+        <div class="sg-section__kicker">Foundations · 02</div>
+        <h2 class="sg-h2">字體排印 Type</h2>
+        <p class="sg-section__desc">三種字族分工：襯線用於標題（山居氣質）、無襯線用於內文、等寬用於一切數字（金額、訂單編號、密碼）並搭配 tabular-nums。字級由 display 到 code-xl 共十一級。</p>
+      </div>
+
+      <h3 class="sg-subhead">字族 Families</h3>
+      <div class="sg-family-card">
+        <div class="sg-family-card__meta">--ds-font-serif · 襯線 · 標題</div>
+        <div style="font-family: var(--ds-font-serif); font-size: var(--ds-text-h1); font-weight: 700;">厝味・九份山居 山城裡的一盞燈</div>
+      </div>
+      <div class="sg-family-card">
+        <div class="sg-family-card__meta">--ds-font-sans · 無襯線 · 內文</div>
+        <div style="font-family: var(--ds-font-sans); font-size: var(--ds-text-body);">歡迎自助報到。抵達前完成證件上傳與付款，到達時直接輸入大門密碼即可入住。</div>
+      </div>
+      <div class="sg-family-card">
+        <div class="sg-family-card__meta">--ds-font-mono · 等寬 · 數字 / 代碼 · tabular-nums</div>
+        <div style="font-family: var(--ds-font-mono); font-size: var(--ds-text-price); font-weight: 700; font-variant-numeric: tabular-nums; color: var(--ds-color-primary);">NT$ 4,800 · #JF-20260815 · 8842</div>
+      </div>
+
+      <h3 class="sg-subhead">字級階梯 Scale</h3>
+      <div class="sg-specimen" style="box-shadow: none;">
+        <div class="sg-preview sg-preview--stack" style="background-color: var(--ds-color-surface); gap: 0; padding: var(--ds-space-2) var(--ds-space-6);">
+
+          <div class="sg-type-row">
+            <div style="font-family: var(--ds-font-serif); font-size: var(--ds-text-display); line-height: var(--ds-text-display-lh); font-weight: var(--ds-text-display-weight);">確認訂單</div>
+            <div class="sg-type-spec"><b>--ds-text-display</b>2rem · lh 1.25 · 700 · serif</div>
+          </div>
+
+          <div class="sg-type-row">
+            <div style="font-family: var(--ds-font-serif); font-size: var(--ds-text-h1); line-height: var(--ds-text-h1-lh); font-weight: var(--ds-text-h1-weight);">九份山居・雲霧雅房</div>
+            <div class="sg-type-spec"><b>--ds-text-h1</b>1.75rem · lh 1.28 · 700 · serif</div>
+          </div>
+
+          <div class="sg-type-row">
+            <div style="font-family: var(--ds-font-serif); font-size: var(--ds-text-h2); line-height: var(--ds-text-h2-lh); font-weight: var(--ds-text-h2-weight);">您好，歡迎自助報到</div>
+            <div class="sg-type-spec"><b>--ds-text-h2</b>1.25rem · lh 1.4 · 600 · serif</div>
+          </div>
+
+          <div class="sg-type-row">
+            <div style="font-family: var(--ds-font-sans); font-size: var(--ds-text-h3); line-height: var(--ds-text-h3-lh); font-weight: var(--ds-text-h3-weight);">雙人房・山景陽台</div>
+            <div class="sg-type-spec"><b>--ds-text-h3</b>1.0625rem · lh 1.5 · 600 · sans</div>
+          </div>
+
+          <div class="sg-type-row">
+            <div style="font-family: var(--ds-font-sans); font-size: var(--ds-text-body); line-height: var(--ds-text-body-lh); font-weight: var(--ds-text-body-weight);">抵達前完成報到手續，讓入住更順暢。</div>
+            <div class="sg-type-spec"><b>--ds-text-body</b>1rem · lh 1.6 · 400 · sans</div>
+          </div>
+
+          <div class="sg-type-row">
+            <div style="font-family: var(--ds-font-sans); font-size: var(--ds-text-body-sm); line-height: var(--ds-text-body-sm-lh); color: var(--ds-color-ink-secondary);">證件僅用於入住核對，不作其他用途。</div>
+            <div class="sg-type-spec"><b>--ds-text-body-sm</b>0.875rem · lh 1.55 · 400 · sans</div>
+          </div>
+
+          <div class="sg-type-row">
+            <div style="font-family: var(--ds-font-sans); font-size: var(--ds-text-caption); line-height: var(--ds-text-caption-lh); font-weight: var(--ds-text-caption-weight); letter-spacing: var(--ds-text-caption-tracking); text-transform: uppercase; color: var(--ds-color-ink-secondary);">CHECK-IN DATE</div>
+            <div class="sg-type-spec"><b>--ds-text-caption</b>0.75rem · lh 1.4 · 500 · tracking .04em</div>
+          </div>
+
+          <div class="sg-type-row">
+            <div style="font-family: var(--ds-font-mono); font-size: var(--ds-text-price); line-height: var(--ds-text-price-lh); font-weight: var(--ds-text-price-weight); font-variant-numeric: tabular-nums; color: var(--ds-color-primary);">NT$ 4,800</div>
+            <div class="sg-type-spec"><b>--ds-text-price</b>1.75rem · lh 1.1 · 700 · mono</div>
+          </div>
+
+          <div class="sg-type-row">
+            <div style="font-family: var(--ds-font-mono); font-size: var(--ds-text-code); line-height: var(--ds-text-code-lh); font-weight: var(--ds-text-code-weight); font-variant-numeric: tabular-nums;">#JF-20260815</div>
+            <div class="sg-type-spec"><b>--ds-text-code</b>0.9375rem · lh 1.3 · 600 · mono</div>
+          </div>
+
+          <div class="sg-type-row">
+            <div style="font-family: var(--ds-font-mono); font-size: var(--ds-text-code-xl); line-height: var(--ds-text-code-xl-lh); font-weight: var(--ds-text-code-xl-weight); font-variant-numeric: tabular-nums; letter-spacing: .12em; color: var(--ds-color-primary);">8842</div>
+            <div class="sg-type-spec"><b>--ds-text-code-xl</b>3rem · lh 1 · 700 · mono · 大門密碼</div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------- 間距 ---------- -->
+    <section id="space" class="sg-section">
+      <div class="sg-section__head">
+        <div class="sg-section__kicker">Foundations · 03</div>
+        <h2 class="sg-h2">間距 Space</h2>
+        <p class="sg-section__desc">以 4px 為基準的節奏，命名 <code style="font-family:var(--ds-font-mono)">--ds-space-1</code> 到 <code style="font-family:var(--ds-font-mono)">--ds-space-16</code>。條長度即該 token 實際寬度。</p>
+      </div>
+      <div class="sg-token-grid">
+        <div class="sg-token-card"><div class="sg-token-card__name">--ds-space-1</div><div class="sg-token-card__val">4px</div><div class="sg-space-bar" style="width: 4px;"></div></div>
+        <div class="sg-token-card"><div class="sg-token-card__name">--ds-space-2</div><div class="sg-token-card__val">8px</div><div class="sg-space-bar" style="width: 8px;"></div></div>
+        <div class="sg-token-card"><div class="sg-token-card__name">--ds-space-3</div><div class="sg-token-card__val">12px</div><div class="sg-space-bar" style="width: 12px;"></div></div>
+        <div class="sg-token-card"><div class="sg-token-card__name">--ds-space-4</div><div class="sg-token-card__val">16px</div><div class="sg-space-bar" style="width: 16px;"></div></div>
+        <div class="sg-token-card"><div class="sg-token-card__name">--ds-space-5</div><div class="sg-token-card__val">20px</div><div class="sg-space-bar" style="width: 20px;"></div></div>
+        <div class="sg-token-card"><div class="sg-token-card__name">--ds-space-6</div><div class="sg-token-card__val">24px</div><div class="sg-space-bar" style="width: 24px;"></div></div>
+        <div class="sg-token-card"><div class="sg-token-card__name">--ds-space-8</div><div class="sg-token-card__val">32px</div><div class="sg-space-bar" style="width: 32px;"></div></div>
+        <div class="sg-token-card"><div class="sg-token-card__name">--ds-space-10</div><div class="sg-token-card__val">40px</div><div class="sg-space-bar" style="width: 40px;"></div></div>
+        <div class="sg-token-card"><div class="sg-token-card__name">--ds-space-12</div><div class="sg-token-card__val">48px</div><div class="sg-space-bar" style="width: 48px;"></div></div>
+        <div class="sg-token-card"><div class="sg-token-card__name">--ds-space-16</div><div class="sg-token-card__val">64px</div><div class="sg-space-bar" style="width: 64px;"></div></div>
+      </div>
+    </section>
+
+    <!-- ---------- 圓角 ---------- -->
+    <section id="radius" class="sg-section">
+      <div class="sg-section__head">
+        <div class="sg-section__kicker">Foundations · 04</div>
+        <h2 class="sg-h2">圓角 Radius</h2>
+        <p class="sg-section__desc">由小元件到大卡片，<code style="font-family:var(--ds-font-mono)">--ds-radius-pill</code> 為膠囊形（chip / 語言切換 / 徽章）。</p>
+      </div>
+      <div class="sg-token-grid">
+        <div class="sg-token-card"><div class="sg-token-card__name">--ds-radius-sm</div><div class="sg-token-card__val">8px</div><div class="sg-radius-demo" style="border-radius: var(--ds-radius-sm);"></div></div>
+        <div class="sg-token-card"><div class="sg-token-card__name">--ds-radius-md</div><div class="sg-token-card__val">12px</div><div class="sg-radius-demo" style="border-radius: var(--ds-radius-md);"></div></div>
+        <div class="sg-token-card"><div class="sg-token-card__name">--ds-radius-lg</div><div class="sg-token-card__val">16px</div><div class="sg-radius-demo" style="border-radius: var(--ds-radius-lg);"></div></div>
+        <div class="sg-token-card"><div class="sg-token-card__name">--ds-radius-xl</div><div class="sg-token-card__val">18px</div><div class="sg-radius-demo" style="border-radius: var(--ds-radius-xl);"></div></div>
+        <div class="sg-token-card"><div class="sg-token-card__name">--ds-radius-2xl</div><div class="sg-token-card__val">24px</div><div class="sg-radius-demo" style="border-radius: var(--ds-radius-2xl);"></div></div>
+        <div class="sg-token-card"><div class="sg-token-card__name">--ds-radius-pill</div><div class="sg-token-card__val">999px</div><div class="sg-radius-demo" style="border-radius: var(--ds-radius-pill);"></div></div>
+      </div>
+    </section>
+
+    <!-- ---------- 陰影 ---------- -->
+    <section id="shadow" class="sg-section">
+      <div class="sg-section__head">
+        <div class="sg-section__kicker">Foundations · 05</div>
+        <h2 class="sg-h2">陰影 Shadow</h2>
+        <p class="sg-section__desc">柔和暖色陰影（棕調、方向朝下），營造紙感浮起。focus 一律使用 <code style="font-family:var(--ds-font-mono)">--ds-shadow-focus</code>（赭紅外環）。</p>
+      </div>
+      <div class="sg-token-grid">
+        <div class="sg-token-card"><div class="sg-token-card__name">--ds-shadow-sm</div><div class="sg-token-card__val">細微浮起</div><div class="sg-shadow-demo" style="box-shadow: var(--ds-shadow-sm);"></div></div>
+        <div class="sg-token-card"><div class="sg-token-card__name">--ds-shadow-card</div><div class="sg-token-card__val">卡片陰影</div><div class="sg-shadow-demo" style="box-shadow: var(--ds-shadow-card);"></div></div>
+        <div class="sg-token-card"><div class="sg-token-card__name">--ds-shadow-raised</div><div class="sg-token-card__val">浮起 / 對話框</div><div class="sg-shadow-demo" style="box-shadow: var(--ds-shadow-raised);"></div></div>
+        <div class="sg-token-card"><div class="sg-token-card__name">--ds-shadow-focus</div><div class="sg-token-card__val">focus 外環</div><div class="sg-shadow-demo" style="box-shadow: var(--ds-shadow-focus);"></div></div>
+      </div>
+    </section>
+
+    <!-- ================= 元件庫 ================= -->
+
+    <!-- Button -->
+    <section id="c-button" class="sg-section">
+      <div class="sg-section__head">
+        <div class="sg-section__kicker">Components · 按鈕</div>
+        <h2 class="sg-h2">按鈕 Button</h2>
+        <p class="sg-section__desc">主 CTA（赭紅實心）、次要（白底赭紅字＋邊框）、文字（透明）。支援滿寬 <code style="font-family:var(--ds-font-mono)">--block</code> 與金額後綴 <code style="font-family:var(--ds-font-mono)">.ds-btn__amount</code>。</p>
+      </div>
+
+      <div class="sg-specimen">
+        <div class="sg-specimen__title"><span class="sg-specimen__name">.ds-btn</span><span class="sg-specimen__desc">變體與狀態</span></div>
+        <div class="sg-preview">
+          <button class="ds-btn ds-btn--primary">確認付款</button>
+          <button class="ds-btn ds-btn--secondary">稍後再說</button>
+          <button class="ds-btn ds-btn--ghost">返回上一步</button>
+          <button class="ds-btn ds-btn--primary" disabled>處理中</button>
+        </div>
+        <div class="sg-preview" style="border-top: 1px solid var(--ds-color-border);">
+          <button class="ds-btn ds-btn--primary ds-btn--block">確認付款<span class="ds-btn__amount">NT$4,800</span></button>
+        </div>
+        <div class="sg-code">
+          <button class="sg-copy" type="button">複製</button>
+<pre><code>&lt;button class="ds-btn ds-btn--primary"&gt;確認付款&lt;/button&gt;
+&lt;button class="ds-btn ds-btn--secondary"&gt;稍後再說&lt;/button&gt;
+&lt;button class="ds-btn ds-btn--ghost"&gt;返回上一步&lt;/button&gt;
+&lt;button class="ds-btn ds-btn--primary" disabled&gt;處理中&lt;/button&gt;
+
+&lt;button class="ds-btn ds-btn--primary ds-btn--block"&gt;
+  確認付款&lt;span class="ds-btn__amount"&gt;NT$4,800&lt;/span&gt;
+&lt;/button&gt;</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- Card -->
+    <section id="c-card" class="sg-section">
+      <div class="sg-section__head">
+        <div class="sg-section__kicker">Components · 卡片</div>
+        <h2 class="sg-h2">卡片 Card</h2>
+        <p class="sg-section__desc">內容容器。預設帶暖色陰影；<code style="font-family:var(--ds-font-mono)">--flat</code> 僅邊框；<code style="font-family:var(--ds-font-mono)">--sunken</code> 內凹底（常作摘要內層）。</p>
+      </div>
+      <div class="sg-specimen">
+        <div class="sg-specimen__title"><span class="sg-specimen__name">.ds-card</span><span class="sg-specimen__desc">預設 / --flat / --sunken</span></div>
+        <div class="sg-preview">
+          <div class="ds-card" style="flex:1; min-width:220px;">
+            <h3 style="margin:0 0 var(--ds-space-2); font-family:var(--ds-font-serif); font-size:var(--ds-text-h3);">預設卡片</h3>
+            <p style="margin:0; font-size:var(--ds-text-body-sm); color:var(--ds-color-ink-secondary);">帶柔和暖色陰影，用於主要內容。</p>
+          </div>
+          <div class="ds-card ds-card--flat" style="flex:1; min-width:220px;">
+            <h3 style="margin:0 0 var(--ds-space-2); font-family:var(--ds-font-serif); font-size:var(--ds-text-h3);">--flat</h3>
+            <p style="margin:0; font-size:var(--ds-text-body-sm); color:var(--ds-color-ink-secondary);">只有邊框、無陰影。</p>
+          </div>
+          <div class="ds-card ds-card--sunken" style="flex:1; min-width:220px;">
+            <h3 style="margin:0 0 var(--ds-space-2); font-family:var(--ds-font-serif); font-size:var(--ds-text-h3);">--sunken</h3>
+            <p style="margin:0; font-size:var(--ds-text-body-sm); color:var(--ds-color-ink-secondary);">內凹底，作摘要內層。</p>
+          </div>
+        </div>
+        <div class="sg-code">
+          <button class="sg-copy" type="button">複製</button>
+<pre><code>&lt;div class="ds-card"&gt;…&lt;/div&gt;
+&lt;div class="ds-card ds-card--flat"&gt;…&lt;/div&gt;
+&lt;div class="ds-card ds-card--sunken"&gt;…&lt;/div&gt;</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- Chip / Badge -->
+    <section id="c-chip" class="sg-section">
+      <div class="sg-section__head">
+        <div class="sg-section__kicker">Components · 標籤</div>
+        <h2 class="sg-h2">標籤 Chip · 徽章 Badge</h2>
+        <p class="sg-section__desc">Chip 為中性資訊標籤；Badge 為狀態標示，可含 <code style="font-family:var(--ds-font-mono)">.ds-badge__dot</code> 小圓點，變體 success / pending / on-primary。</p>
+      </div>
+      <div class="sg-specimen">
+        <div class="sg-specimen__title"><span class="sg-specimen__name">.ds-chip</span><span class="sg-specimen__desc">資訊標籤</span></div>
+        <div class="sg-preview">
+          <span class="ds-chip">共 2 晚</span>
+          <span class="ds-chip">2 間房</span>
+          <span class="ds-chip">免費停車</span>
+          <span class="ds-chip">山景陽台</span>
+        </div>
+        <div class="sg-code">
+          <button class="sg-copy" type="button">複製</button>
+<pre><code>&lt;span class="ds-chip"&gt;共 2 晚&lt;/span&gt;
+&lt;span class="ds-chip"&gt;免費停車&lt;/span&gt;</code></pre>
+        </div>
+      </div>
+      <div class="sg-specimen">
+        <div class="sg-specimen__title"><span class="sg-specimen__name">.ds-badge</span><span class="sg-specimen__desc">--success / --pending / --on-primary</span></div>
+        <div class="sg-preview">
+          <span class="ds-badge ds-badge--success"><span class="ds-badge__dot"></span>已付清</span>
+          <span class="ds-badge ds-badge--success"><span class="ds-badge__dot"></span>已上傳</span>
+          <span class="ds-badge ds-badge--pending"><span class="ds-badge__dot"></span>待上傳</span>
+          <span class="ds-badge"><span class="ds-badge__dot"></span>中性</span>
+          <span style="display:inline-flex; padding:var(--ds-space-2); background:var(--ds-color-primary); border-radius:var(--ds-radius-pill);"><span class="ds-badge ds-badge--on-primary">住宿期間有效</span></span>
+        </div>
+        <div class="sg-code">
+          <button class="sg-copy" type="button">複製</button>
+<pre><code>&lt;span class="ds-badge ds-badge--success"&gt;
+  &lt;span class="ds-badge__dot"&gt;&lt;/span&gt;已付清
+&lt;/span&gt;
+&lt;span class="ds-badge ds-badge--pending"&gt;
+  &lt;span class="ds-badge__dot"&gt;&lt;/span&gt;待上傳
+&lt;/span&gt;
+&lt;span class="ds-badge ds-badge--on-primary"&gt;住宿期間有效&lt;/span&gt;</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- Field -->
+    <section id="c-field" class="sg-section">
+      <div class="sg-section__head">
+        <div class="sg-section__kicker">Components · 欄位</div>
+        <h2 class="sg-h2">輸入欄位 Field</h2>
+        <p class="sg-section__desc">label 在上方（caption 樣式）。<code style="font-family:var(--ds-font-mono)">--mono</code> 用於卡號 / 日期；<code style="font-family:var(--ds-font-mono)">--split</code> 讓有效期限與安全碼並排。點擊輸入框可見赭紅 focus 外環。</p>
+      </div>
+      <div class="sg-specimen">
+        <div class="sg-specimen__title"><span class="sg-specimen__name">.ds-field</span><span class="sg-specimen__desc">一般 / mono / disabled / split</span></div>
+        <div class="sg-preview sg-preview--stack sg-preview--narrow">
+          <div class="ds-field">
+            <label class="ds-field__label">姓名</label>
+            <input class="ds-field__input" type="text" placeholder="請輸入姓名">
+          </div>
+          <div class="ds-field">
+            <label class="ds-field__label">信用卡卡號</label>
+            <input class="ds-field__input ds-field__input--mono" type="text" value="4242 4242 4242 4242">
+          </div>
+          <div class="ds-field">
+            <label class="ds-field__label">入住日期</label>
+            <input class="ds-field__input ds-field__input--mono" type="text" value="2026 / 08 / 15">
+          </div>
+          <div class="ds-field ds-field--split">
+            <div class="ds-field__row">
+              <div class="ds-field">
+                <label class="ds-field__label">有效期限</label>
+                <input class="ds-field__input ds-field__input--mono" type="text" placeholder="08/28">
+              </div>
+              <div class="ds-field">
+                <label class="ds-field__label">安全碼</label>
+                <input class="ds-field__input ds-field__input--mono" type="text" placeholder="•••">
+              </div>
+            </div>
+          </div>
+          <div class="ds-field">
+            <label class="ds-field__label">訂單編號（唯讀）</label>
+            <input class="ds-field__input ds-field__input--mono" type="text" value="JF-20260815" disabled>
+          </div>
+        </div>
+        <div class="sg-code">
+          <button class="sg-copy" type="button">複製</button>
+<pre><code>&lt;div class="ds-field"&gt;
+  &lt;label class="ds-field__label"&gt;姓名&lt;/label&gt;
+  &lt;input class="ds-field__input" type="text" placeholder="請輸入姓名"&gt;
+&lt;/div&gt;
+
+&lt;div class="ds-field"&gt;
+  &lt;label class="ds-field__label"&gt;入住日期&lt;/label&gt;
+  &lt;input class="ds-field__input ds-field__input--mono" type="text" value="2026 / 08 / 15"&gt;
+&lt;/div&gt;
+
+&lt;div class="ds-field ds-field--split"&gt;
+  &lt;div class="ds-field__row"&gt;
+    &lt;div class="ds-field"&gt;
+      &lt;label class="ds-field__label"&gt;有效期限&lt;/label&gt;
+      &lt;input class="ds-field__input ds-field__input--mono" placeholder="08/28"&gt;
+    &lt;/div&gt;
+    &lt;div class="ds-field"&gt;
+      &lt;label class="ds-field__label"&gt;安全碼&lt;/label&gt;
+      &lt;input class="ds-field__input ds-field__input--mono" placeholder="•••"&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- Option -->
+    <section id="c-option" class="sg-section">
+      <div class="sg-section__head">
+        <div class="sg-section__kicker">Components · 選項</div>
+        <h2 class="sg-h2">選項列 Option</h2>
+        <p class="sg-section__desc">整列可點的單選項。<code style="font-family:var(--ds-font-mono)">.is-selected</code> 呈現赭紅環＋淡底並展開 <code style="font-family:var(--ds-font-mono)">.ds-option__content</code>。點擊下方選項可即時切換。</p>
+      </div>
+      <div class="sg-specimen">
+        <div class="sg-specimen__title"><span class="sg-specimen__name">.ds-option</span><span class="sg-specimen__desc">付款方式（可互動）</span></div>
+        <div class="sg-preview sg-preview--stack sg-preview--narrow" data-radiogroup>
+          <label class="ds-option is-selected">
+            <span class="ds-option__main">
+              <span class="ds-option__radio"></span>
+              <span class="ds-option__label">信用卡</span>
+              <span class="ds-option__brand">VISA / MASTER</span>
+            </span>
+            <span class="ds-option__content">
+              <div class="ds-field">
+                <label class="ds-field__label">卡號</label>
+                <input class="ds-field__input ds-field__input--mono" type="text" placeholder="4242 4242 4242 4242">
+              </div>
+            </span>
+          </label>
+          <label class="ds-option">
+            <span class="ds-option__main">
+              <span class="ds-option__radio"></span>
+              <span class="ds-option__label">Line Pay</span>
+              <span class="ds-option__brand">LINE</span>
+            </span>
+          </label>
+          <label class="ds-option">
+            <span class="ds-option__main">
+              <span class="ds-option__radio"></span>
+              <span class="ds-option__label">TWQR 行動支付</span>
+              <span class="ds-option__brand">TWQR</span>
+            </span>
+          </label>
+        </div>
+        <div class="sg-code">
+          <button class="sg-copy" type="button">複製</button>
+<pre><code>&lt;label class="ds-option is-selected"&gt;
+  &lt;span class="ds-option__main"&gt;
+    &lt;span class="ds-option__radio"&gt;&lt;/span&gt;
+    &lt;span class="ds-option__label"&gt;信用卡&lt;/span&gt;
+    &lt;span class="ds-option__brand"&gt;VISA / MASTER&lt;/span&gt;
+  &lt;/span&gt;
+  &lt;span class="ds-option__content"&gt;…展開內容…&lt;/span&gt;
+&lt;/label&gt;
+&lt;label class="ds-option"&gt;
+  &lt;span class="ds-option__main"&gt;
+    &lt;span class="ds-option__radio"&gt;&lt;/span&gt;
+    &lt;span class="ds-option__label"&gt;Line Pay&lt;/span&gt;
+  &lt;/span&gt;
+&lt;/label&gt;</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- Stepper -->
+    <section id="c-stepper" class="sg-section">
+      <div class="sg-section__head">
+        <div class="sg-section__kicker">Components · 步驟</div>
+        <h2 class="sg-h2">步驟進度 Stepper</h2>
+        <p class="sg-section__desc">頂部橫向步驟條。<code style="font-family:var(--ds-font-mono)">.is-done</code> 與 <code style="font-family:var(--ds-font-mono)">.is-active</code> 皆為赭紅（active 更粗），其餘為淡色 todo。</p>
+      </div>
+      <div class="sg-specimen">
+        <div class="sg-specimen__title"><span class="sg-specimen__name">.ds-stepper</span><span class="sg-specimen__desc">三步驟報到流程</span></div>
+        <div class="sg-preview sg-preview--stack sg-preview--narrow">
+          <div class="ds-stepper">
+            <div class="ds-stepper__step is-done">
+              <span class="ds-stepper__label">1 · 上傳證件</span>
+              <span class="ds-stepper__bar"></span>
+            </div>
+            <div class="ds-stepper__step is-active">
+              <span class="ds-stepper__label">2 · 住宿須知</span>
+              <span class="ds-stepper__bar"></span>
+            </div>
+            <div class="ds-stepper__step">
+              <span class="ds-stepper__label">3 · 完成付款</span>
+              <span class="ds-stepper__bar"></span>
+            </div>
+          </div>
+        </div>
+        <div class="sg-code">
+          <button class="sg-copy" type="button">複製</button>
+<pre><code>&lt;div class="ds-stepper"&gt;
+  &lt;div class="ds-stepper__step is-done"&gt;
+    &lt;span class="ds-stepper__label"&gt;1 · 上傳證件&lt;/span&gt;
+    &lt;span class="ds-stepper__bar"&gt;&lt;/span&gt;
+  &lt;/div&gt;
+  &lt;div class="ds-stepper__step is-active"&gt;
+    &lt;span class="ds-stepper__label"&gt;2 · 住宿須知&lt;/span&gt;
+    &lt;span class="ds-stepper__bar"&gt;&lt;/span&gt;
+  &lt;/div&gt;
+  &lt;div class="ds-stepper__step"&gt;
+    &lt;span class="ds-stepper__label"&gt;3 · 完成付款&lt;/span&gt;
+    &lt;span class="ds-stepper__bar"&gt;&lt;/span&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+        </div>
+      </div>
+      <div class="sg-specimen">
+        <div class="sg-specimen__title"><span class="sg-specimen__name">.ds-stepper</span><span class="sg-specimen__desc">兩步驟報到流程</span></div>
+        <div class="sg-preview sg-preview--stack sg-preview--narrow">
+          <div class="ds-stepper">
+            <div class="ds-stepper__step is-active">
+              <span class="ds-stepper__label">1 · 上傳證件</span>
+              <span class="ds-stepper__bar"></span>
+            </div>
+            <div class="ds-stepper__step">
+              <span class="ds-stepper__label">2 · 完成付款</span>
+              <span class="ds-stepper__bar"></span>
+            </div>
+          </div>
+        </div>
+        <div class="sg-code">
+          <button class="sg-copy" type="button">複製</button>
+<pre><code>&lt;div class="ds-stepper"&gt;
+  &lt;div class="ds-stepper__step is-active"&gt;
+    &lt;span class="ds-stepper__label"&gt;1 · 上傳證件&lt;/span&gt;
+    &lt;span class="ds-stepper__bar"&gt;&lt;/span&gt;
+  &lt;/div&gt;
+  &lt;div class="ds-stepper__step"&gt;
+    &lt;span class="ds-stepper__label"&gt;2 · 完成付款&lt;/span&gt;
+    &lt;span class="ds-stepper__bar"&gt;&lt;/span&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- Checklist -->
+    <section id="c-checklist" class="sg-section">
+      <div class="sg-section__head">
+        <div class="sg-section__kicker">Components · 清單</div>
+        <h2 class="sg-h2">待辦清單 Checklist</h2>
+        <p class="sg-section__desc">編號圈＋標題＋右側徽章。<code style="font-family:var(--ds-font-mono)">.is-done</code> 使編號圈轉綠、標題轉淡。</p>
+      </div>
+      <div class="sg-specimen">
+        <div class="sg-specimen__title"><span class="sg-specimen__name">.ds-checklist</span><span class="sg-specimen__desc">報到前尚待完成</span></div>
+        <div class="sg-preview sg-preview--narrow" style="display:block;">
+          <ul class="ds-checklist">
+            <li class="ds-checklist__item is-done">
+              <span class="ds-checklist__num">1</span>
+              <span class="ds-checklist__title">上傳證件</span>
+              <span class="ds-badge ds-badge--success"><span class="ds-badge__dot"></span>已上傳</span>
+            </li>
+            <li class="ds-checklist__item">
+              <span class="ds-checklist__num">2</span>
+              <span class="ds-checklist__title">閱讀住宿須知</span>
+              <span class="ds-badge ds-badge--pending"><span class="ds-badge__dot"></span>待完成</span>
+            </li>
+            <li class="ds-checklist__item">
+              <span class="ds-checklist__num">3</span>
+              <span class="ds-checklist__title">完成付款</span>
+              <span class="ds-badge ds-badge--pending"><span class="ds-badge__dot"></span>待完成</span>
+            </li>
+          </ul>
+        </div>
+        <div class="sg-code">
+          <button class="sg-copy" type="button">複製</button>
+<pre><code>&lt;ul class="ds-checklist"&gt;
+  &lt;li class="ds-checklist__item is-done"&gt;
+    &lt;span class="ds-checklist__num"&gt;1&lt;/span&gt;
+    &lt;span class="ds-checklist__title"&gt;上傳證件&lt;/span&gt;
+    &lt;span class="ds-badge ds-badge--success"&gt;
+      &lt;span class="ds-badge__dot"&gt;&lt;/span&gt;已上傳
+    &lt;/span&gt;
+  &lt;/li&gt;
+  &lt;li class="ds-checklist__item"&gt;
+    &lt;span class="ds-checklist__num"&gt;2&lt;/span&gt;
+    &lt;span class="ds-checklist__title"&gt;閱讀住宿須知&lt;/span&gt;
+    &lt;span class="ds-badge ds-badge--pending"&gt;
+      &lt;span class="ds-badge__dot"&gt;&lt;/span&gt;待完成
+    &lt;/span&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- Summary / Price -->
+    <section id="c-summary" class="sg-section">
+      <div class="sg-section__head">
+        <div class="sg-section__kicker">Components · 摘要</div>
+        <h2 class="sg-h2">摘要列 Summary · 金額 Price</h2>
+        <p class="sg-section__desc">卡內左右對齊列，含入住 → 退房日期列與訂單編號碼。Price 為赭紅等寬 tabular-nums，<code style="font-family:var(--ds-font-mono)">--xl</code> 為大金額。</p>
+      </div>
+      <div class="sg-specimen">
+        <div class="sg-specimen__title"><span class="sg-specimen__name">.ds-summary</span><span class="sg-specimen__desc">日期列 / 訂單編號 / 金額</span></div>
+        <div class="sg-preview sg-preview--narrow" style="display:block;">
+          <div class="ds-card ds-card--sunken">
+            <div class="ds-summary ds-summary--dates">
+              <span class="ds-summary__date">
+                <span class="ds-summary__label">CHECK-IN</span>
+                <span class="ds-summary__daynum">2026 / 08 / 15</span>
+              </span>
+              <span class="ds-summary__arrow">→</span>
+              <span class="ds-summary__date ds-summary__date--end">
+                <span class="ds-summary__label">CHECK-OUT</span>
+                <span class="ds-summary__daynum">2026 / 08 / 17</span>
+              </span>
+            </div>
+            <hr class="ds-divider">
+            <div class="ds-summary">
+              <span class="ds-summary__label">訂單編號</span>
+              <span class="ds-summary__value ds-summary__value--code">JF-20260815</span>
+            </div>
+          </div>
+        </div>
+        <div class="sg-preview">
+          <span class="ds-price"><span class="ds-price__currency">NT$</span>4,800</span>
+          <span class="ds-price ds-price--xl"><span class="ds-price__currency">NT$</span>9,600</span>
+        </div>
+        <div class="sg-code">
+          <button class="sg-copy" type="button">複製</button>
+<pre><code>&lt;div class="ds-summary ds-summary--dates"&gt;
+  &lt;span class="ds-summary__date"&gt;
+    &lt;span class="ds-summary__label"&gt;CHECK-IN&lt;/span&gt;
+    &lt;span class="ds-summary__daynum"&gt;2026 / 08 / 15&lt;/span&gt;
+  &lt;/span&gt;
+  &lt;span class="ds-summary__arrow"&gt;→&lt;/span&gt;
+  &lt;span class="ds-summary__date ds-summary__date--end"&gt;
+    &lt;span class="ds-summary__label"&gt;CHECK-OUT&lt;/span&gt;
+    &lt;span class="ds-summary__daynum"&gt;2026 / 08 / 17&lt;/span&gt;
+  &lt;/span&gt;
+&lt;/div&gt;
+
+&lt;div class="ds-summary"&gt;
+  &lt;span class="ds-summary__label"&gt;訂單編號&lt;/span&gt;
+  &lt;span class="ds-summary__value ds-summary__value--code"&gt;JF-20260815&lt;/span&gt;
+&lt;/div&gt;
+
+&lt;span class="ds-price"&gt;&lt;span class="ds-price__currency"&gt;NT$&lt;/span&gt;4,800&lt;/span&gt;
+&lt;span class="ds-price ds-price--xl"&gt;&lt;span class="ds-price__currency"&gt;NT$&lt;/span&gt;9,600&lt;/span&gt;</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- Header / Hero / Brandmark -->
+    <section id="c-header" class="sg-section">
+      <div class="sg-section__head">
+        <div class="sg-section__kicker">Components · 頁首</div>
+        <h2 class="sg-h2">頁首 Header · 主視覺 Hero · 品牌方塊 Brandmark</h2>
+        <p class="sg-section__desc">頁首含品牌方塊、名稱與右側動作（語言 / 電話）。Hero 為 tan → 深褐漸層大圖，底部覆蓋白字標題與標語。</p>
+      </div>
+      <div class="sg-specimen">
+        <div class="sg-specimen__title"><span class="sg-specimen__name">.ds-header</span><span class="sg-specimen__desc">品牌 + 語言 + 電話</span></div>
+        <div class="sg-preview" style="display:block; padding:0;">
+          <div class="ds-header">
+            <div class="ds-header__brand">
+              <span class="ds-brandmark">厝</span>
+              <span class="ds-header__name">厝味・九份山居</span>
+            </div>
+            <div class="ds-header__actions">
+              <a class="ds-header__phone" href="tel:+886212345678">02-1234-5678</a>
+              <div class="ds-lang">
+                <button class="ds-lang__btn is-selected">中</button>
+                <button class="ds-lang__btn">EN</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="sg-code">
+          <button class="sg-copy" type="button">複製</button>
+<pre><code>&lt;header class="ds-header"&gt;
+  &lt;div class="ds-header__brand"&gt;
+    &lt;span class="ds-brandmark"&gt;厝&lt;/span&gt;
+    &lt;span class="ds-header__name"&gt;厝味・九份山居&lt;/span&gt;
+  &lt;/div&gt;
+  &lt;div class="ds-header__actions"&gt;
+    &lt;a class="ds-header__phone" href="tel:+886212345678"&gt;02-1234-5678&lt;/a&gt;
+    &lt;div class="ds-lang"&gt;
+      &lt;button class="ds-lang__btn is-selected"&gt;中&lt;/button&gt;
+      &lt;button class="ds-lang__btn"&gt;EN&lt;/button&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/header&gt;</code></pre>
+        </div>
+      </div>
+      <div class="sg-specimen">
+        <div class="sg-specimen__title"><span class="sg-specimen__name">.ds-header</span><span class="sg-specimen__desc">手機版：僅 logo + 名 + 語言（隱藏電話）</span></div>
+        <div class="sg-preview" style="display:block; padding:0;">
+          <div style="max-width:380px;">
+            <div class="ds-header">
+              <div class="ds-header__brand">
+                <span class="ds-brandmark">厝</span>
+                <span class="ds-header__name">厝味・九份山居</span>
+              </div>
+              <div class="ds-header__actions">
+                <div class="ds-lang">
+                  <button class="ds-lang__btn is-selected">中</button>
+                  <button class="ds-lang__btn">EN</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="sg-note">窄螢幕（≤ 640px）自動隱藏 <code style="font-family:var(--ds-font-mono)">.ds-header__phone</code>，僅保留品牌與語言切換。</div>
+        <div class="sg-code">
+          <button class="sg-copy" type="button">複製</button>
+<pre><code>&lt;header class="ds-header"&gt;
+  &lt;div class="ds-header__brand"&gt;
+    &lt;span class="ds-brandmark"&gt;厝&lt;/span&gt;
+    &lt;span class="ds-header__name"&gt;厝味・九份山居&lt;/span&gt;
+  &lt;/div&gt;
+  &lt;div class="ds-header__actions"&gt;
+    &lt;div class="ds-lang"&gt;
+      &lt;button class="ds-lang__btn is-selected"&gt;中&lt;/button&gt;
+      &lt;button class="ds-lang__btn"&gt;EN&lt;/button&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/header&gt;</code></pre>
+        </div>
+      </div>
+      <div class="sg-specimen">
+        <div class="sg-specimen__title"><span class="sg-specimen__name">.ds-hero</span><span class="sg-specimen__desc">主視覺 + 環境照徽章</span></div>
+        <div class="sg-preview sg-preview--narrow" style="display:block;">
+          <div class="ds-hero">
+            <span class="ds-hero__badge"><span class="ds-badge ds-badge--on-primary">環境照</span></span>
+            <h2 class="ds-hero__title">九份山居・雲霧雅房</h2>
+            <p class="ds-hero__tagline">推開窗就是基隆山與海，夜裡點一盞燈等你回家。</p>
+          </div>
+        </div>
+        <div class="sg-code">
+          <button class="sg-copy" type="button">複製</button>
+<pre><code>&lt;div class="ds-hero"&gt;
+  &lt;span class="ds-hero__badge"&gt;
+    &lt;span class="ds-badge ds-badge--on-primary"&gt;環境照&lt;/span&gt;
+  &lt;/span&gt;
+  &lt;h2 class="ds-hero__title"&gt;九份山居・雲霧雅房&lt;/h2&gt;
+  &lt;p class="ds-hero__tagline"&gt;推開窗就是基隆山與海…&lt;/p&gt;
+&lt;/div&gt;</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- Upload -->
+    <section id="c-upload" class="sg-section">
+      <div class="sg-section__head">
+        <div class="sg-section__kicker">Components · 上傳</div>
+        <h2 class="sg-h2">上傳框 Upload</h2>
+        <p class="sg-section__desc">虛線 dropzone，hover / focus 轉赭紅。已上傳時改以檔案列（縮圖＋檔名＋大小＋重新上傳）呈現。</p>
+      </div>
+      <div class="sg-specimen">
+        <div class="sg-specimen__title"><span class="sg-specimen__name">.ds-upload</span><span class="sg-specimen__desc">空框 / 已上傳</span></div>
+        <div class="sg-preview sg-preview--stack sg-preview--narrow">
+          <div class="ds-upload">
+            <span class="ds-upload__icon">＋</span>
+            <span class="ds-upload__hint">拍照或上傳證件</span>
+          </div>
+          <div class="ds-upload__file">
+            <span class="ds-upload__thumb"></span>
+            <span class="ds-upload__meta">
+              <span class="ds-upload__filename">id-front-photo.jpg</span>
+              <span class="ds-upload__size">1.8 MB</span>
+            </span>
+            <button class="ds-btn ds-btn--ghost">重新上傳</button>
+          </div>
+        </div>
+        <div class="sg-code">
+          <button class="sg-copy" type="button">複製</button>
+<pre><code>&lt;div class="ds-upload"&gt;
+  &lt;span class="ds-upload__icon"&gt;＋&lt;/span&gt;
+  &lt;span class="ds-upload__hint"&gt;拍照或上傳證件&lt;/span&gt;
+&lt;/div&gt;
+
+&lt;div class="ds-upload__file"&gt;
+  &lt;span class="ds-upload__thumb"&gt;&lt;/span&gt;
+  &lt;span class="ds-upload__meta"&gt;
+    &lt;span class="ds-upload__filename"&gt;id-front-photo.jpg&lt;/span&gt;
+    &lt;span class="ds-upload__size"&gt;1.8 MB&lt;/span&gt;
+  &lt;/span&gt;
+  &lt;button class="ds-btn ds-btn--ghost"&gt;重新上傳&lt;/button&gt;
+&lt;/div&gt;</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- Doorcode -->
+    <section id="c-doorcode" class="sg-section">
+      <div class="sg-section__head">
+        <div class="sg-section__kicker">Components · 密碼卡</div>
+        <h2 class="sg-h2">大門密碼卡 Doorcode</h2>
+        <p class="sg-section__desc">赭紅實心大卡、白色 code-xl 大密碼，含 label、on-primary 徽章與說明。報到成功後的主角。</p>
+      </div>
+      <div class="sg-specimen">
+        <div class="sg-specimen__title"><span class="sg-specimen__name">.ds-doorcode</span><span class="sg-specimen__desc">大門密碼</span></div>
+        <div class="sg-preview sg-preview--narrow" style="display:block;">
+          <div class="ds-doorcode">
+            <span class="ds-doorcode__label">大門密碼</span>
+            <span class="ds-doorcode__code">8842</span>
+            <span class="ds-badge ds-badge--on-primary">住宿期間有效</span>
+            <span class="ds-doorcode__note">抵達後於大門鍵盤輸入密碼，按 # 開門。</span>
+          </div>
+        </div>
+        <div class="sg-code">
+          <button class="sg-copy" type="button">複製</button>
+<pre><code>&lt;div class="ds-doorcode"&gt;
+  &lt;span class="ds-doorcode__label"&gt;大門密碼&lt;/span&gt;
+  &lt;span class="ds-doorcode__code"&gt;8842&lt;/span&gt;
+  &lt;span class="ds-badge ds-badge--on-primary"&gt;住宿期間有效&lt;/span&gt;
+  &lt;span class="ds-doorcode__note"&gt;抵達後於大門鍵盤輸入密碼，按 # 開門。&lt;/span&gt;
+&lt;/div&gt;</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- Infolist / Notice -->
+    <section id="c-infolist" class="sg-section">
+      <div class="sg-section__head">
+        <div class="sg-section__kicker">Components · 資訊</div>
+        <h2 class="sg-h2">資訊列 Infolist · 通知 Notice</h2>
+        <p class="sg-section__desc">Infolist 為定義列表，值右對齊並可帶行內動作。Notice 為淺底橫幅，變體 success / info。</p>
+      </div>
+      <div class="sg-specimen">
+        <div class="sg-specimen__title"><span class="sg-specimen__name">.ds-infolist</span><span class="sg-specimen__desc">地址 / 交通 / Wi-Fi</span></div>
+        <div class="sg-preview sg-preview--narrow" style="display:block;">
+          <div class="ds-card">
+            <dl class="ds-infolist">
+              <div class="ds-infolist__row">
+                <dt class="ds-infolist__label">地址</dt>
+                <dd class="ds-infolist__value" style="margin:0;">新北市瑞芳區山居路 88 號<button class="ds-infolist__action">導航</button></dd>
+              </div>
+              <div class="ds-infolist__row">
+                <dt class="ds-infolist__label">交通</dt>
+                <dd class="ds-infolist__value" style="margin:0;">瑞芳車站轉乘 788 公車至山居站</dd>
+              </div>
+              <div class="ds-infolist__row">
+                <dt class="ds-infolist__label">Wi-Fi</dt>
+                <dd class="ds-infolist__value" style="margin:0;">Jiufen-Homestay<button class="ds-infolist__action">複製</button></dd>
+              </div>
+            </dl>
+          </div>
+        </div>
+        <div class="sg-code">
+          <button class="sg-copy" type="button">複製</button>
+<pre><code>&lt;dl class="ds-infolist"&gt;
+  &lt;div class="ds-infolist__row"&gt;
+    &lt;dt class="ds-infolist__label"&gt;地址&lt;/dt&gt;
+    &lt;dd class="ds-infolist__value"&gt;新北市瑞芳區山居路 88 號
+      &lt;button class="ds-infolist__action"&gt;導航&lt;/button&gt;
+    &lt;/dd&gt;
+  &lt;/div&gt;
+&lt;/dl&gt;</code></pre>
+        </div>
+      </div>
+      <div class="sg-specimen">
+        <div class="sg-specimen__title"><span class="sg-specimen__name">.ds-notice</span><span class="sg-specimen__desc">預設 / --success / --info</span></div>
+        <div class="sg-preview sg-preview--stack sg-preview--narrow">
+          <div class="ds-notice ds-notice--success">
+            <span class="ds-notice__icon">✓</span>
+            <span>此訂單已完成付款，感謝您！</span>
+          </div>
+          <div class="ds-notice ds-notice--info">
+            <span class="ds-notice__icon">ⓘ</span>
+            <span>證件僅用於入住核對，退房後即刪除，不作其他用途。</span>
+          </div>
+          <div class="ds-notice">
+            <span class="ds-notice__icon">◷</span>
+            <span>入住時間為 15:00 後，退房為 11:00 前。</span>
+          </div>
+        </div>
+        <div class="sg-code">
+          <button class="sg-copy" type="button">複製</button>
+<pre><code>&lt;div class="ds-notice ds-notice--success"&gt;
+  &lt;span class="ds-notice__icon"&gt;✓&lt;/span&gt;
+  &lt;span&gt;此訂單已完成付款，感謝您！&lt;/span&gt;
+&lt;/div&gt;
+&lt;div class="ds-notice ds-notice--info"&gt;
+  &lt;span class="ds-notice__icon"&gt;ⓘ&lt;/span&gt;
+  &lt;span&gt;證件僅用於入住核對…&lt;/span&gt;
+&lt;/div&gt;</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact / Lang / Divider -->
+    <section id="c-contact" class="sg-section">
+      <div class="sg-section__head">
+        <div class="sg-section__kicker">Components · 聯絡</div>
+        <h2 class="sg-h2">聯絡列 Contact · 語言 Lang · 分隔線 Divider</h2>
+        <p class="sg-section__desc">頁尾客服聯絡區，含可點通訊 chips。Lang 為中 / EN 分段控制。Divider 為 border 色細線。</p>
+      </div>
+      <div class="sg-specimen">
+        <div class="sg-specimen__title"><span class="sg-specimen__name">.ds-contact</span><span class="sg-specimen__desc">客服聯絡</span></div>
+        <div class="sg-preview sg-preview--narrow" style="display:block;">
+          <div class="ds-card ds-card--flat">
+            <div class="ds-contact">
+              <span class="ds-contact__title">需要協助？聯繫客服</span>
+              <div class="ds-contact__links">
+                <a class="ds-contact__link" href="#">LINE 官方</a>
+                <a class="ds-contact__link" href="#">WhatsApp</a>
+                <a class="ds-contact__link" href="#">KakaoTalk</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="sg-preview">
+          <div class="ds-lang">
+            <button class="ds-lang__btn is-selected">中</button>
+            <button class="ds-lang__btn">EN</button>
+          </div>
+          <div style="flex:1; min-width:160px;"><hr class="ds-divider" style="margin:0;"></div>
+        </div>
+        <div class="sg-code">
+          <button class="sg-copy" type="button">複製</button>
+<pre><code>&lt;div class="ds-contact"&gt;
+  &lt;span class="ds-contact__title"&gt;需要協助？聯繫客服&lt;/span&gt;
+  &lt;div class="ds-contact__links"&gt;
+    &lt;a class="ds-contact__link" href="#"&gt;LINE 官方&lt;/a&gt;
+    &lt;a class="ds-contact__link" href="#"&gt;WhatsApp&lt;/a&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;hr class="ds-divider"&gt;</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= 組合範例 ================= -->
+
+    <!-- 確認訂單卡 -->
+    <section id="p-order" class="sg-section">
+      <div class="sg-section__head">
+        <div class="sg-section__kicker">Patterns · 01</div>
+        <h2 class="sg-h2">確認訂單卡</h2>
+        <p class="sg-section__desc">以 header、hero、chip、summary、divider、price 與 block 按鈕組出的真實付款前畫面 —— 證明元件可直接拼成完整螢幕。</p>
+      </div>
+      <div class="sg-scenario-grid">
+        <div>
+          <div class="sg-phone">
+            <div class="ds-header">
+              <div class="ds-header__brand">
+                <span class="ds-brandmark">厝</span>
+                <span class="ds-header__name">厝味・九份山居</span>
+              </div>
+              <div class="ds-header__actions">
+                <div class="ds-lang">
+                  <button class="ds-lang__btn is-selected">中</button>
+                  <button class="ds-lang__btn">EN</button>
+                </div>
+              </div>
+            </div>
+            <div class="sg-phone__body">
+              <div class="ds-stack">
+                <div class="ds-stepper">
+                  <div class="ds-stepper__step is-done"><span class="ds-stepper__label">1 · 上傳證件</span><span class="ds-stepper__bar"></span></div>
+                  <div class="ds-stepper__step is-done"><span class="ds-stepper__label">2 · 住宿須知</span><span class="ds-stepper__bar"></span></div>
+                  <div class="ds-stepper__step is-active"><span class="ds-stepper__label">3 · 完成付款</span><span class="ds-stepper__bar"></span></div>
+                </div>
+
+                <h1 style="margin:0; font-family:var(--ds-font-serif); font-size:var(--ds-text-display); line-height:var(--ds-text-display-lh);">確認訂單</h1>
+
+                <div class="ds-hero" style="min-height:150px;">
+                  <span class="ds-hero__badge"><span class="ds-badge ds-badge--on-primary">環境照</span></span>
+                  <h2 class="ds-hero__title">雲霧雅房</h2>
+                  <p class="ds-hero__tagline">山景陽台・雙人房</p>
+                </div>
+
+                <div style="display:flex; flex-wrap:wrap; gap:var(--ds-space-2);">
+                  <span class="ds-chip">共 2 晚</span>
+                  <span class="ds-chip">2 位入住</span>
+                  <span class="ds-chip">免費停車</span>
+                </div>
+
+                <div class="ds-card ds-card--sunken">
+                  <div class="ds-summary ds-summary--dates">
+                    <span class="ds-summary__date">
+                      <span class="ds-summary__label">CHECK-IN</span>
+                      <span class="ds-summary__daynum">2026 / 08 / 15</span>
+                    </span>
+                    <span class="ds-summary__arrow">→</span>
+                    <span class="ds-summary__date ds-summary__date--end">
+                      <span class="ds-summary__label">CHECK-OUT</span>
+                      <span class="ds-summary__daynum">2026 / 08 / 17</span>
+                    </span>
+                  </div>
+                  <hr class="ds-divider">
+                  <div class="ds-summary">
+                    <span class="ds-summary__label">訂單編號</span>
+                    <span class="ds-summary__value ds-summary__value--code">JF-20260815</span>
+                  </div>
+                  <hr class="ds-divider">
+                  <div class="ds-summary" style="align-items:center;">
+                    <span class="ds-summary__label">應付總額</span>
+                    <span class="ds-price"><span class="ds-price__currency">NT$</span>4,800</span>
+                  </div>
+                </div>
+
+                <div class="ds-notice ds-notice--info">
+                  <span class="ds-notice__icon">ⓘ</span>
+                  <span>付款完成後，大門密碼將立即顯示於本頁。</span>
+                </div>
+
+                <button class="ds-btn ds-btn--primary ds-btn--block">確認付款<span class="ds-btn__amount">NT$4,800</span></button>
+              </div>
+            </div>
+          </div>
+          <p class="sg-scenario-caption">付款前的確認訂單畫面</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 報到成功密碼卡 -->
+    <section id="p-success" class="sg-section">
+      <div class="sg-section__head">
+        <div class="sg-section__kicker">Patterns · 02</div>
+        <h2 class="sg-h2">報到成功密碼卡</h2>
+        <p class="sg-section__desc">付款完成後的成功頁：success notice、doorcode 大密碼、infolist 現場資訊與客服聯絡列。</p>
+      </div>
+      <div class="sg-scenario-grid">
+        <div>
+          <div class="sg-phone">
+            <div class="ds-header">
+              <div class="ds-header__brand">
+                <span class="ds-brandmark">厝</span>
+                <span class="ds-header__name">厝味・九份山居</span>
+              </div>
+              <div class="ds-header__actions">
+                <div class="ds-lang">
+                  <button class="ds-lang__btn is-selected">中</button>
+                  <button class="ds-lang__btn">EN</button>
+                </div>
+              </div>
+            </div>
+            <div class="sg-phone__body">
+              <div class="ds-stack">
+                <div style="text-align:center;">
+                  <div style="display:inline-flex; align-items:center; justify-content:center; width:var(--ds-space-16); height:var(--ds-space-16); border-radius:var(--ds-radius-pill); background:var(--ds-color-success-bg); color:var(--ds-color-success-ink); font-size:var(--ds-text-h1);">✓</div>
+                  <h1 style="margin:var(--ds-space-4) 0 0; font-family:var(--ds-font-serif); font-size:var(--ds-text-display); line-height:var(--ds-text-display-lh);">報到完成</h1>
+                  <p style="margin:var(--ds-space-2) 0 0; color:var(--ds-color-ink-secondary); font-size:var(--ds-text-body-sm);">王小姐，期待在山城見到您</p>
+                </div>
+
+                <div class="ds-notice ds-notice--success">
+                  <span class="ds-notice__icon">✓</span>
+                  <span>此訂單已完成付款，證件已核對。</span>
+                </div>
+
+                <div class="ds-doorcode">
+                  <span class="ds-doorcode__label">大門密碼</span>
+                  <span class="ds-doorcode__code">8842</span>
+                  <span class="ds-badge ds-badge--on-primary">住宿期間有效</span>
+                  <span class="ds-doorcode__note">抵達後於大門鍵盤輸入密碼，按 # 開門。</span>
+                </div>
+
+                <div class="ds-card">
+                  <dl class="ds-infolist">
+                    <div class="ds-infolist__row">
+                      <dt class="ds-infolist__label">地址</dt>
+                      <dd class="ds-infolist__value" style="margin:0;">瑞芳區山居路 88 號<button class="ds-infolist__action">導航</button></dd>
+                    </div>
+                    <div class="ds-infolist__row">
+                      <dt class="ds-infolist__label">房號</dt>
+                      <dd class="ds-infolist__value" style="margin:0;">2 樓・雲霧雅房</dd>
+                    </div>
+                    <div class="ds-infolist__row">
+                      <dt class="ds-infolist__label">Wi-Fi</dt>
+                      <dd class="ds-infolist__value" style="margin:0;">Jiufen-Homestay<button class="ds-infolist__action">複製</button></dd>
+                    </div>
+                  </dl>
+                </div>
+
+                <div class="ds-contact">
+                  <span class="ds-contact__title">需要協助？聯繫客服</span>
+                  <div class="ds-contact__links">
+                    <a class="ds-contact__link" href="#">LINE 官方</a>
+                    <a class="ds-contact__link" href="#">WhatsApp</a>
+                    <a class="ds-contact__link" href="#">KakaoTalk</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <p class="sg-scenario-caption">報到成功、顯示大門密碼的完成頁</p>
+        </div>
+      </div>
+    </section>
+
+    <p class="sg-note">厝味・九份山居 自助報到系統 · 設計系統 v1 · 本文件由 tokens.css 與 components.css 即時渲染</p>
+
+  </main>
+</div>
+
+<script>
+  // 複製按鈕：複製同一 specimen 內 <code> 的原始 HTML 片段
+  document.querySelectorAll('.sg-copy').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var code = btn.parentElement.querySelector('code');
+      if (!code) return;
+      var text = code.innerText;
+      navigator.clipboard.writeText(text).then(function () {
+        var old = btn.textContent;
+        btn.textContent = '已複製 ✓';
+        btn.classList.add('is-copied');
+        setTimeout(function () {
+          btn.textContent = old;
+          btn.classList.remove('is-copied');
+        }, 1600);
+      });
+    });
+  });
+
+  // 選項列：點擊切換 .is-selected（示範互動）
+  document.querySelectorAll('[data-radiogroup]').forEach(function (group) {
+    var options = group.querySelectorAll('.ds-option');
+    options.forEach(function (opt) {
+      opt.addEventListener('click', function () {
+        options.forEach(function (o) { o.classList.remove('is-selected'); });
+        opt.classList.add('is-selected');
+      });
+    });
+  });
+</script>
+</body>
+</html>

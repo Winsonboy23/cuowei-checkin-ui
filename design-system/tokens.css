@@ -1,0 +1,196 @@
+/* ============================================================
+   厝味・九份山居 自助報到系統 — 設計系統 Tokens
+   Single Source of Truth（單一真實來源）
+
+   這是整套「厝味自助報到」介面的設計變數唯一來源。
+   所有顏色、字體、間距、圓角、陰影、動效都定義在此。
+   要調整主題（換色、改字級、調陰影…）只需修改這個檔案，
+   全站會一併更新，不要在元件裡寫死數值。
+
+   風格：溫暖、編輯感（editorial）的台灣民宿風格。
+         暖米白底、赭紅重點色、襯線標題＋等寬數字、
+         圓角、柔和暖色陰影、留白充足。淺色單一主題（無深色模式）。
+   前綴：所有變數一律 --ds-*
+   ============================================================ */
+
+:root {
+  /* ---------------------------------------------------------
+     顏色 Color — 表面與背景
+     頁面底、內凹面板、卡片表面等由淺到白的層次
+     --------------------------------------------------------- */
+  --ds-color-bg: #F6F0E4;             /* 頁面背景（暖米白） */
+  --ds-color-bg-sunken: #EFE6D6;      /* 內凹面板 / 金額摘要底 / 訂單摘要內層 */
+  --ds-color-surface: #FDFBF5;        /* 卡片 / 主要表面（暖白） */
+  --ds-color-surface-raised: #FFFFFF; /* 浮起表面（少用純白，如瀏覽器框） */
+
+  /* ---------------------------------------------------------
+     顏色 Color — 文字 Ink
+     由深至淺的褐色文字階層，主文字為深褐非純黑
+     --------------------------------------------------------- */
+  --ds-color-ink: #33291D;            /* 主要文字（深褐，非純黑） */
+  --ds-color-ink-secondary: #6E6150;  /* 次要文字 / 說明 */
+  --ds-color-ink-muted: #756848;      /* 淡色文字 / placeholder / footer（已加深達 WCAG AA） */
+
+  /* ---------------------------------------------------------
+     顏色 Color — 主色 赭紅 Primary
+     CTA 按鈕、重點、金額、連結、訂單編號，含互動狀態與淡底
+     --------------------------------------------------------- */
+  --ds-color-primary: #AE5A36;        /* 主色赭紅（填色 / CTA / 大字）：白字對比達 AA 4.87:1 */
+  --ds-color-primary-hover: #99492A;  /* 主色 hover */
+  --ds-color-primary-active: #833C22; /* 主色 pressed */
+  --ds-color-primary-ink: #8C4526;    /* 主色「文字」版：小字赭紅（訂單編號 / 連結 / 次要按鈕字 / 編號圈）達 AA */
+  --ds-color-primary-soft: #F6E9DD;   /* 主色淡底：被選取的選項底、focus 前景 */
+  --ds-color-on-primary: #FFFFFF;     /* 主色上的文字 */
+  --ds-color-on-primary-soft: rgba(255, 255, 255, .18); /* 主色上的半透明白（on-primary 徽章底等） */
+
+  /* ---------------------------------------------------------
+     顏色 Color — 裝飾與標籤 Accent / Chip
+     tan 中間調裝飾、chip 標籤底與文字
+     --------------------------------------------------------- */
+  --ds-color-accent-tan: #C6B08A;     /* tan 裝飾：logo 方塊、hero 中間調、房型圖示 */
+  --ds-color-chip-bg: #ECE3D1;        /* 標籤 / chip 底 */
+  --ds-color-chip-ink: #6E6150;       /* 標籤文字 */
+
+  /* ---------------------------------------------------------
+     顏色 Color — 成功 Success
+     報到成功、已付清、已上傳等正向狀態
+     --------------------------------------------------------- */
+  --ds-color-success: #5F7A4E;        /* 成功綠：報到成功勾勾、已付清、已上傳 */
+  --ds-color-success-bg: #E8EFDB;     /* 成功淺綠底（徽章 / 橫幅） */
+  --ds-color-success-ink: #4C6539;    /* 成功文字 */
+
+  /* ---------------------------------------------------------
+     顏色 Color — 邊框 Border
+     一般分隔線與較明顯 / hover 邊框
+     --------------------------------------------------------- */
+  --ds-color-border: #E7DBC5;         /* 一般邊框 / 分隔線 */
+  --ds-color-border-strong: #D8C8A9;  /* 較明顯邊框 / hover 邊框 */
+
+  /* ---------------------------------------------------------
+     顏色 Color — Hero 漸層與 Focus 外環
+     hero 由 tan 漸層至深褐；focus 焦點外環
+     --------------------------------------------------------- */
+  --ds-color-hero-from: #C6B08A;         /* hero 漸層上緣（tan） */
+  --ds-color-hero-to: #2A2114;           /* hero 漸層下緣（深褐） */
+  --ds-color-hero-scrim: rgba(42, 33, 20, .65); /* hero 底部覆蓋層（= hero-to 半透明），確保白字可讀 */
+  --ds-focus-ring: rgba(174, 90, 54, .35); /* focus 外環（= primary） */
+
+  /* ---------------------------------------------------------
+     字體家族 Font Families
+     襯線標題、無襯線內文、等寬數字
+     --------------------------------------------------------- */
+  --ds-font-serif: "Noto Serif TC", "Songti TC", "Source Han Serif TC", serif;                                   /* 襯線：標題 */
+  --ds-font-sans: -apple-system, BlinkMacSystemFont, "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", system-ui, sans-serif; /* 無襯線：內文 */
+  --ds-font-mono: "SF Mono", "Roboto Mono", ui-monospace, "JetBrains Mono", monospace;                            /* 等寬：數字 / 代碼 */
+
+  /* ---------------------------------------------------------
+     字級 Type Scale
+     每一級含 size / line-height / weight / family。
+     依 --ds-text-<name> 命名，數字類搭配 tabular-nums 使用。
+     --------------------------------------------------------- */
+
+  /* display — 頁面主標題（確認訂單 / 完成付款） */
+  --ds-text-display: 2rem;
+  --ds-text-display-lh: 1.25;
+  --ds-text-display-weight: 700;
+  --ds-text-display-family: var(--ds-font-serif);
+
+  /* h1 — hero 民宿名 / 大標 */
+  --ds-text-h1: 1.75rem;
+  --ds-text-h1-lh: 1.28;
+  --ds-text-h1-weight: 700;
+  --ds-text-h1-family: var(--ds-font-serif);
+
+  /* h2 — 區塊標題（您好,歡迎自助報到） */
+  --ds-text-h2: 1.25rem;
+  --ds-text-h2-lh: 1.4;
+  --ds-text-h2-weight: 600;
+  --ds-text-h2-family: var(--ds-font-serif);
+
+  /* h3 — 卡片內小標 / 房型名 */
+  --ds-text-h3: 1.0625rem;
+  --ds-text-h3-lh: 1.5;
+  --ds-text-h3-weight: 600;
+  --ds-text-h3-family: var(--ds-font-sans);
+
+  /* body — 內文 */
+  --ds-text-body: 1rem;
+  --ds-text-body-lh: 1.6;
+  --ds-text-body-weight: 400;
+  --ds-text-body-family: var(--ds-font-sans);
+
+  /* body-sm — 次要內文 / 說明 */
+  --ds-text-body-sm: 0.875rem;
+  --ds-text-body-sm-lh: 1.55;
+  --ds-text-body-sm-weight: 400;
+  --ds-text-body-sm-family: var(--ds-font-sans);
+
+  /* caption — 標籤 / 欄位 label / footer（字距 .04em） */
+  --ds-text-caption: 0.75rem;
+  --ds-text-caption-lh: 1.4;
+  --ds-text-caption-weight: 500;
+  --ds-text-caption-family: var(--ds-font-sans);
+  --ds-text-caption-tracking: .04em;
+
+  /* price — 金額（NT$ 4,800），tabular-nums */
+  --ds-text-price: 1.75rem;
+  --ds-text-price-lh: 1.1;
+  --ds-text-price-weight: 700;
+  --ds-text-price-family: var(--ds-font-mono);
+
+  /* code — 訂單編號 / 卡號 / 日期，tabular-nums */
+  --ds-text-code: 0.9375rem;
+  --ds-text-code-lh: 1.3;
+  --ds-text-code-weight: 600;
+  --ds-text-code-family: var(--ds-font-mono);
+
+  /* code-xl — 大門密碼 8842，字距寬 */
+  --ds-text-code-xl: 3rem;
+  --ds-text-code-xl-lh: 1;
+  --ds-text-code-xl-weight: 700;
+  --ds-text-code-xl-family: var(--ds-font-mono);
+
+  /* ---------------------------------------------------------
+     間距 Space
+     版面內距 / 外距 / 元件間隙的統一節奏（4px 基準）
+     --------------------------------------------------------- */
+  --ds-space-1: 4px;
+  --ds-space-2: 8px;
+  --ds-space-3: 12px;
+  --ds-space-4: 16px;
+  --ds-space-5: 20px;
+  --ds-space-6: 24px;
+  --ds-space-8: 32px;
+  --ds-space-10: 40px;
+  --ds-space-12: 48px;
+  --ds-space-16: 64px;
+
+  /* ---------------------------------------------------------
+     圓角 Radius
+     由小元件到大卡片，pill 為膠囊形（chip / 按鈕）
+     --------------------------------------------------------- */
+  --ds-radius-sm: 8px;
+  --ds-radius-md: 12px;
+  --ds-radius-lg: 16px;
+  --ds-radius-xl: 18px;
+  --ds-radius-2xl: 24px;
+  --ds-radius-pill: 999px;
+
+  /* ---------------------------------------------------------
+     陰影 Shadow
+     柔和暖色陰影，focus 使用 --ds-focus-ring
+     --------------------------------------------------------- */
+  --ds-shadow-sm: 0 1px 2px rgba(70, 50, 25, .06);          /* 細微浮起 */
+  --ds-shadow-card: 0 18px 40px -24px rgba(88, 62, 33, .45); /* 卡片陰影 */
+  --ds-shadow-raised: 0 24px 60px -28px rgba(88, 62, 33, .5); /* 浮起 / 對話框 */
+  --ds-shadow-focus: 0 0 0 3px var(--ds-focus-ring);         /* focus 外環 */
+
+  /* ---------------------------------------------------------
+     動效 Motion
+     統一緩動曲線與三種時長（快 / 標準 / 慢）
+     --------------------------------------------------------- */
+  --ds-ease: cubic-bezier(.2, .7, .3, 1);
+  --ds-dur-fast: .15s;
+  --ds-dur: .2s;
+  --ds-dur-slow: .35s;
+}

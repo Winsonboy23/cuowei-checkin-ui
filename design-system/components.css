@@ -1,0 +1,1109 @@
+/* ============================================================
+   厝味・九份山居 自助報到系統 — 元件 Components
+   以 tokens.css 的 --ds-* 變數打造可重用元件類別。
+
+   命名：BEM-lite
+     基底   .ds-btn
+     變體   .ds-btn--primary
+     狀態   :hover / :focus-visible / [disabled] / .is-selected
+
+   原則：
+     - 一律以 var(--ds-*) 驅動，不硬編色值 / 尺寸 / 圓角 / 陰影。
+     - 互動元件皆具 hover / focus-visible（焦點用 --ds-shadow-focus）/ disabled。
+     - 金額 / 訂單編號 / 卡號 / 密碼採等寬字並 tabular-nums。
+     - 風格：暖米白底、赭紅重點、襯線標題＋等寬數字、圓角、柔和暖色陰影。
+
+   相依：tokens.css（必須先載入）
+   ============================================================ */
+
+/* ============================================================
+   Layout utils 版面工具（極少量必要）
+   .ds-container 置中限寬；.ds-stack 垂直間距。
+   ============================================================ */
+.ds-container {
+  width: 100%;
+  max-width: 480px;
+  margin-inline: auto;
+  padding-inline: var(--ds-space-5);
+}
+
+.ds-stack > * + * {
+  margin-top: var(--ds-space-4);
+}
+
+/* ============================================================
+   Button 按鈕 — .ds-btn
+   用途：主要 CTA（確認付款 / 下一步）、次要動作、文字按鈕。
+   對應畫面：各頁底部滿寬 CTA、卡內次要操作。
+   變體：--primary（赭紅實心）/ --secondary（白底赭紅字＋邊框）/ --ghost（透明）
+   狀態：hover / active / :disabled / --block（滿寬）/ 帶金額後綴
+   ============================================================ */
+.ds-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ds-space-2);
+  padding: var(--ds-space-4) var(--ds-space-6);
+  border: 1px solid transparent;
+  border-radius: var(--ds-radius-lg);
+  font-family: var(--ds-font-sans);
+  font-size: var(--ds-text-body);
+  font-weight: 700;
+  line-height: 1;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  user-select: none;
+  transition:
+    background-color var(--ds-dur) var(--ds-ease),
+    border-color var(--ds-dur) var(--ds-ease),
+    color var(--ds-dur) var(--ds-ease),
+    box-shadow var(--ds-dur) var(--ds-ease),
+    transform var(--ds-dur-fast) var(--ds-ease);
+}
+
+.ds-btn:focus-visible {
+  outline: none;
+  box-shadow: var(--ds-shadow-focus);
+}
+
+.ds-btn:disabled,
+.ds-btn[disabled],
+.ds-btn.is-disabled {
+  background-color: var(--ds-color-chip-bg);
+  border-color: var(--ds-color-border);
+  color: var(--ds-color-ink-muted);
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* 變體 --primary：赭紅實心，白字，主 CTA */
+.ds-btn--primary {
+  background-color: var(--ds-color-primary);
+  border-color: var(--ds-color-primary);
+  color: var(--ds-color-on-primary);
+  box-shadow: var(--ds-shadow-sm);
+}
+.ds-btn--primary:hover {
+  background-color: var(--ds-color-primary-hover);
+  border-color: var(--ds-color-primary-hover);
+}
+.ds-btn--primary:active {
+  background-color: var(--ds-color-primary-active);
+  border-color: var(--ds-color-primary-active);
+  transform: translateY(1px);
+}
+
+/* 變體 --secondary：白底赭紅字＋邊框 */
+.ds-btn--secondary {
+  background-color: var(--ds-color-surface);
+  border-color: var(--ds-color-primary);
+  color: var(--ds-color-primary-ink);
+}
+.ds-btn--secondary:hover {
+  background-color: var(--ds-color-primary-soft);
+}
+.ds-btn--secondary:active {
+  background-color: var(--ds-color-primary-soft);
+  border-color: var(--ds-color-primary-active);
+  color: var(--ds-color-primary-active);
+  transform: translateY(1px);
+}
+
+/* 變體 --ghost：透明 */
+.ds-btn--ghost {
+  background-color: transparent;
+  border-color: transparent;
+  color: var(--ds-color-primary-ink);
+}
+.ds-btn--ghost:hover {
+  background-color: var(--ds-color-primary-soft);
+}
+.ds-btn--ghost:active {
+  color: var(--ds-color-primary-active);
+  transform: translateY(1px);
+}
+
+/* 狀態 --block：滿寬（常置底作主 CTA） */
+.ds-btn--block {
+  display: flex;
+  width: 100%;
+}
+
+/* 金額後綴（確認付款 · NT$4,800）：分隔點與等寬金額 */
+.ds-btn__amount {
+  font-family: var(--ds-font-mono);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.ds-btn__amount::before {
+  content: "·";
+  margin-inline: var(--ds-space-2);
+  opacity: .7;
+}
+
+/* ============================================================
+   Card 卡片 — .ds-card
+   用途：內容容器（房型、摘要、資訊區塊）。
+   對應畫面：各頁主要內容卡片。
+   變體：預設（陰影）/ --flat（只有邊框）/ --sunken（內凹底）
+   ============================================================ */
+.ds-card {
+  background-color: var(--ds-color-surface);
+  border: 1px solid var(--ds-color-border);
+  border-radius: var(--ds-radius-xl);
+  box-shadow: var(--ds-shadow-card);
+  padding: var(--ds-space-6);
+}
+
+/* 變體 --flat：無陰影只有邊框 */
+.ds-card--flat {
+  box-shadow: none;
+}
+
+/* 變體 --sunken：bg-sunken 內凹面板 */
+.ds-card--sunken {
+  background-color: var(--ds-color-bg-sunken);
+  border-color: var(--ds-color-border);
+  box-shadow: none;
+}
+
+/* ============================================================
+   Chip / Tag 標籤 — .ds-chip
+   用途：小型資訊標籤。
+   對應畫面：共2晚 / 2間房 / 免費停車 / 山景陽台。
+   ============================================================ */
+.ds-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ds-space-1);
+  padding: var(--ds-space-1) var(--ds-space-3);
+  background-color: var(--ds-color-chip-bg);
+  border-radius: var(--ds-radius-pill);
+  color: var(--ds-color-chip-ink);
+  font-family: var(--ds-text-caption-family);
+  font-size: var(--ds-text-caption);
+  line-height: var(--ds-text-caption-lh);
+  font-weight: var(--ds-text-caption-weight);
+  letter-spacing: var(--ds-text-caption-tracking);
+  white-space: nowrap;
+}
+
+/* ============================================================
+   Badge 狀態徽章 — .ds-badge
+   用途：狀態標示，可含小圓點。
+   對應畫面：已付清 / 已上傳（綠）、待上傳 / 待完成（tan）、
+             住宿期間有效（赭紅底上）。
+   變體：--success / --pending / --on-primary
+   ============================================================ */
+.ds-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ds-space-2);
+  padding: var(--ds-space-1) var(--ds-space-3);
+  border-radius: var(--ds-radius-pill);
+  font-family: var(--ds-text-caption-family);
+  font-size: var(--ds-text-caption);
+  line-height: var(--ds-text-caption-lh);
+  font-weight: 600;
+  letter-spacing: var(--ds-text-caption-tracking);
+  white-space: nowrap;
+  /* 預設：tan 中性 */
+  background-color: var(--ds-color-chip-bg);
+  color: var(--ds-color-chip-ink);
+}
+
+/* 徽章內小圓點（狀態指示） */
+.ds-badge__dot {
+  width: var(--ds-space-2);
+  height: var(--ds-space-2);
+  border-radius: var(--ds-radius-pill);
+  background-color: currentColor;
+  flex: none;
+}
+
+/* 變體 --success：已付清 / 已上傳（綠） */
+.ds-badge--success {
+  background-color: var(--ds-color-success-bg);
+  color: var(--ds-color-success-ink);
+}
+
+/* 變體 --pending：待上傳 / 待完成（tan） */
+.ds-badge--pending {
+  background-color: var(--ds-color-chip-bg);
+  color: var(--ds-color-ink-secondary);
+}
+
+/* 變體 --on-primary：住宿期間有效（赭紅底上，半透明白） */
+.ds-badge--on-primary {
+  background-color: var(--ds-color-on-primary-soft);
+  color: var(--ds-color-on-primary);
+}
+
+/* ============================================================
+   Field 輸入欄位 — .ds-field
+   用途：文字 / 卡號 / 日期輸入，label 在上方。
+   對應畫面：姓名 / 卡號 / 日期（2026 / 08 / 15）。
+   變體：--split（有效期限 08/28、安全碼 · · ·）
+   狀態：:focus（赭紅邊＋focus 外環）、placeholder（ink-muted）
+   ============================================================ */
+.ds-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-space-2);
+}
+
+/* label 在上方（caption 樣式） */
+.ds-field__label {
+  font-family: var(--ds-text-caption-family);
+  font-size: var(--ds-text-caption);
+  line-height: var(--ds-text-caption-lh);
+  font-weight: var(--ds-text-caption-weight);
+  letter-spacing: var(--ds-text-caption-tracking);
+  color: var(--ds-color-ink-secondary);
+}
+
+.ds-field__input {
+  width: 100%;
+  padding: var(--ds-space-3) var(--ds-space-4);
+  background-color: var(--ds-color-surface);
+  border: 1px solid var(--ds-color-border);
+  border-radius: var(--ds-radius-md);
+  color: var(--ds-color-ink);
+  font-family: var(--ds-font-sans);
+  font-size: var(--ds-text-body);
+  line-height: var(--ds-text-body-lh);
+  transition:
+    border-color var(--ds-dur) var(--ds-ease),
+    box-shadow var(--ds-dur) var(--ds-ease);
+}
+
+.ds-field__input::placeholder {
+  color: var(--ds-color-ink-muted);
+}
+
+.ds-field__input:focus,
+.ds-field__input:focus-visible {
+  outline: none;
+  border-color: var(--ds-color-primary);
+  box-shadow: var(--ds-shadow-focus);
+}
+
+.ds-field__input:disabled {
+  background-color: var(--ds-color-bg-sunken);
+  color: var(--ds-color-ink-muted);
+  cursor: not-allowed;
+}
+
+/* 卡號 / 日期輸入：等寬字 + tabular-nums（加 .ds-field__input--mono） */
+.ds-field__input--mono {
+  font-family: var(--ds-font-mono);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: .02em;
+}
+
+/* 變體 --split：有效期限 / 安全碼並排 */
+.ds-field--split .ds-field__row {
+  display: flex;
+  gap: var(--ds-space-3);
+}
+.ds-field--split .ds-field__row > * {
+  flex: 1;
+}
+
+/* ============================================================
+   Radio option 選項列 — .ds-option
+   用途：整列可點的單選項，左單選圈、右側可放品牌標。
+   對應畫面：付款方式（信用卡 / Line Pay / TWQR）。
+   狀態：.is-selected（赭紅環＋primary-soft 底，可展開內容）
+   ============================================================ */
+.ds-option {
+  display: block;
+  padding: var(--ds-space-4) var(--ds-space-5);
+  background-color: var(--ds-color-surface);
+  border: 1px solid var(--ds-color-border);
+  border-radius: var(--ds-radius-lg);
+  cursor: pointer;
+  transition:
+    background-color var(--ds-dur) var(--ds-ease),
+    border-color var(--ds-dur) var(--ds-ease),
+    box-shadow var(--ds-dur) var(--ds-ease);
+}
+
+.ds-option:hover {
+  border-color: var(--ds-color-border-strong);
+}
+
+.ds-option:focus-within {
+  box-shadow: var(--ds-shadow-focus);
+  border-color: var(--ds-color-primary);
+}
+
+/* 主列：單選圈 + 標題 + 右側品牌標 */
+.ds-option__main {
+  display: flex;
+  align-items: center;
+  gap: var(--ds-space-3);
+}
+
+/* 左側單選圈 */
+.ds-option__radio {
+  flex: none;
+  width: var(--ds-space-5);
+  height: var(--ds-space-5);
+  border: 2px solid var(--ds-color-border-strong);
+  border-radius: var(--ds-radius-pill);
+  position: relative;
+  transition:
+    border-color var(--ds-dur) var(--ds-ease),
+    background-color var(--ds-dur) var(--ds-ease);
+}
+
+.ds-option__label {
+  flex: 1;
+  font-family: var(--ds-font-sans);
+  font-size: var(--ds-text-h3);
+  font-weight: var(--ds-text-h3-weight);
+  color: var(--ds-color-ink);
+}
+
+/* 右側品牌標區 */
+.ds-option__brand {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  color: var(--ds-color-ink-secondary);
+}
+
+/* 展開內容（選中時顯示） */
+.ds-option__content {
+  display: none;
+  margin-top: var(--ds-space-4);
+  padding-top: var(--ds-space-4);
+  border-top: 1px solid var(--ds-color-border);
+}
+
+/* 狀態 .is-selected：赭紅環＋primary-soft 底 */
+.ds-option.is-selected {
+  background-color: var(--ds-color-primary-soft);
+  border-color: var(--ds-color-primary);
+}
+.ds-option.is-selected .ds-option__radio {
+  border-color: var(--ds-color-primary);
+}
+.ds-option.is-selected .ds-option__radio::after {
+  content: "";
+  position: absolute;
+  inset: 3px;
+  border-radius: var(--ds-radius-pill);
+  background-color: var(--ds-color-primary);
+}
+.ds-option.is-selected .ds-option__content {
+  display: block;
+}
+
+/* ============================================================
+   Stepper 步驟進度 — .ds-stepper
+   用途：頂部橫向步驟條，含底線進度。
+   對應畫面：1·上傳證件 2·住宿須知 3·完成付款（亦支援兩步驟）。
+   狀態：.is-done（赭紅）/ .is-active（赭紅粗）/ 預設 todo（淡）
+   ============================================================ */
+.ds-stepper {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--ds-space-2);
+}
+
+.ds-stepper__step {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-space-2);
+  text-align: center;
+}
+
+/* 步驟標題（含編號） */
+.ds-stepper__label {
+  font-family: var(--ds-font-sans);
+  font-size: var(--ds-text-caption);
+  line-height: var(--ds-text-caption-lh);
+  letter-spacing: var(--ds-text-caption-tracking);
+  font-weight: 500;
+  color: var(--ds-color-ink-muted);
+}
+
+/* 底線進度條 */
+.ds-stepper__bar {
+  height: 3px;
+  border-radius: var(--ds-radius-pill);
+  background-color: var(--ds-color-border);
+  transition: background-color var(--ds-dur) var(--ds-ease);
+}
+
+/* 狀態 done：赭紅 */
+.ds-stepper__step.is-done .ds-stepper__label {
+  color: var(--ds-color-primary);
+  font-weight: 600;
+}
+.ds-stepper__step.is-done .ds-stepper__bar {
+  background-color: var(--ds-color-primary);
+}
+
+/* 狀態 active：赭紅粗 */
+.ds-stepper__step.is-active .ds-stepper__label {
+  color: var(--ds-color-primary);
+  font-weight: 700;
+}
+.ds-stepper__step.is-active .ds-stepper__bar {
+  background-color: var(--ds-color-primary);
+}
+
+/* ============================================================
+   Checklist 待辦清單 — .ds-checklist
+   用途：尚待完成事項，編號圈＋標題＋右側狀態徽章。
+   對應畫面：報到前尚待完成清單。
+   狀態：.is-done（完成）/ 預設（待完成）
+   ============================================================ */
+.ds-checklist {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-space-3);
+}
+
+.ds-checklist__item {
+  display: flex;
+  align-items: center;
+  gap: var(--ds-space-3);
+  padding: var(--ds-space-3) var(--ds-space-4);
+  background-color: var(--ds-color-surface);
+  border: 1px solid var(--ds-color-border);
+  border-radius: var(--ds-radius-md);
+}
+
+/* 編號圓圈（primary-soft 底、赭紅字） */
+.ds-checklist__num {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--ds-space-8);
+  height: var(--ds-space-8);
+  border-radius: var(--ds-radius-pill);
+  background-color: var(--ds-color-primary-soft);
+  color: var(--ds-color-primary-ink);
+  font-family: var(--ds-font-mono);
+  font-size: var(--ds-text-code);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.ds-checklist__title {
+  flex: 1;
+  font-family: var(--ds-font-sans);
+  font-size: var(--ds-text-body);
+  color: var(--ds-color-ink);
+}
+
+/* 狀態 .is-done：完成（編號圈轉綠、標題轉淡） */
+.ds-checklist__item.is-done .ds-checklist__num {
+  background-color: var(--ds-color-success-bg);
+  color: var(--ds-color-success-ink);
+}
+.ds-checklist__item.is-done .ds-checklist__title {
+  color: var(--ds-color-ink-muted);
+}
+
+/* ============================================================
+   Summary row 摘要列 — .ds-summary
+   用途：卡內左右對齊的摘要列。
+   對應畫面：入住/退房（CHECK-IN → CHECK-OUT）、訂單編號列、金額列。
+   ============================================================ */
+.ds-summary {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--ds-space-4);
+}
+
+.ds-summary__label {
+  font-family: var(--ds-text-caption-family);
+  font-size: var(--ds-text-caption);
+  letter-spacing: var(--ds-text-caption-tracking);
+  text-transform: uppercase;
+  color: var(--ds-color-ink-secondary);
+}
+
+.ds-summary__value {
+  font-family: var(--ds-font-sans);
+  font-size: var(--ds-text-body);
+  color: var(--ds-color-ink);
+  text-align: right;
+}
+
+/* 訂單編號：等寬赭紅碼 */
+.ds-summary__value--code {
+  font-family: var(--ds-font-mono);
+  font-size: var(--ds-text-code);
+  font-weight: var(--ds-text-code-weight);
+  font-variant-numeric: tabular-nums;
+  color: var(--ds-color-primary-ink);
+}
+
+/* 入住 → 退房：中間箭頭 */
+.ds-summary--dates {
+  align-items: center;
+}
+.ds-summary__arrow {
+  flex: none;
+  color: var(--ds-color-ink-muted);
+}
+.ds-summary__date {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-space-1);
+}
+.ds-summary__date .ds-summary__label {
+  text-align: left;
+}
+.ds-summary__date--end {
+  text-align: right;
+}
+.ds-summary__date--end .ds-summary__label {
+  text-align: right;
+}
+.ds-summary__daynum {
+  font-family: var(--ds-font-mono);
+  font-size: var(--ds-text-code);
+  font-weight: var(--ds-text-code-weight);
+  font-variant-numeric: tabular-nums;
+  color: var(--ds-color-ink);
+}
+
+/* ============================================================
+   Price 金額 — .ds-price
+   用途：金額顯示，NT$ 較小、數字大，赭紅等寬 tabular-nums。
+   對應畫面：金額摘要、CTA 旁總價。
+   變體：--xl
+   ============================================================ */
+.ds-price {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--ds-space-1);
+  font-family: var(--ds-text-price-family);
+  font-size: var(--ds-text-price);
+  line-height: var(--ds-text-price-lh);
+  font-weight: var(--ds-text-price-weight);
+  font-variant-numeric: tabular-nums;
+  color: var(--ds-color-primary);
+}
+
+/* NT$ 幣別較小 */
+.ds-price__currency {
+  font-size: var(--ds-text-code);
+  font-weight: 600;
+}
+
+/* 變體 --xl：大金額 */
+.ds-price--xl {
+  font-size: var(--ds-text-code-xl);
+  line-height: var(--ds-text-code-xl-lh);
+}
+.ds-price--xl .ds-price__currency {
+  font-size: var(--ds-text-price);
+}
+
+/* ============================================================
+   Lang toggle 語言切換 — .ds-lang
+   用途：中 / EN 分段控制，pill 小尺寸，常在右上。
+   對應畫面：頁首右上語言切換。
+   狀態：.is-selected（赭紅實心）/ 未選
+   ============================================================ */
+.ds-lang {
+  display: inline-flex;
+  padding: var(--ds-space-1);
+  background-color: var(--ds-color-chip-bg);
+  border-radius: var(--ds-radius-pill);
+  gap: var(--ds-space-1);
+}
+
+.ds-lang__btn {
+  padding: var(--ds-space-1) var(--ds-space-3);
+  border: none;
+  border-radius: var(--ds-radius-pill);
+  background-color: transparent;
+  color: var(--ds-color-ink-secondary);
+  font-family: var(--ds-font-sans);
+  font-size: var(--ds-text-caption);
+  letter-spacing: var(--ds-text-caption-tracking);
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background-color var(--ds-dur) var(--ds-ease),
+    color var(--ds-dur) var(--ds-ease),
+    box-shadow var(--ds-dur) var(--ds-ease);
+}
+
+.ds-lang__btn:focus-visible {
+  outline: none;
+  box-shadow: var(--ds-shadow-focus);
+}
+
+/* 狀態 .is-selected：赭紅實心 */
+.ds-lang__btn.is-selected {
+  background-color: var(--ds-color-primary);
+  color: var(--ds-color-on-primary);
+}
+
+/* ============================================================
+   App header 頁首 — .ds-header
+   用途：頁面頂部，surface 底、底部細邊，含 brand mark。
+   對應畫面：手機（logo＋名＋語言）/ 桌機（＋電話）。
+   ============================================================ */
+.ds-header {
+  display: flex;
+  align-items: center;
+  gap: var(--ds-space-3);
+  padding: var(--ds-space-4) var(--ds-space-5);
+  background-color: var(--ds-color-surface);
+  border-bottom: 1px solid var(--ds-color-border);
+}
+
+.ds-header__brand {
+  display: flex;
+  align-items: center;
+  gap: var(--ds-space-3);
+  min-width: 0;
+}
+
+.ds-header__name {
+  font-family: var(--ds-font-serif);
+  font-size: var(--ds-text-h3);
+  font-weight: var(--ds-text-h2-weight);
+  color: var(--ds-color-ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 右側動作區（語言 / 電話），推到最右 */
+.ds-header__actions {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: var(--ds-space-3);
+}
+
+/* 電話（桌機顯示）：等寬 tabular-nums */
+.ds-header__phone {
+  font-family: var(--ds-font-mono);
+  font-size: var(--ds-text-body-sm);
+  font-variant-numeric: tabular-nums;
+  color: var(--ds-color-ink-secondary);
+  text-decoration: none;
+}
+.ds-header__phone:hover {
+  color: var(--ds-color-primary);
+}
+
+/* 電話僅桌機顯示：窄螢幕隱藏 */
+@media (max-width: 640px) {
+  .ds-header__phone {
+    display: none;
+  }
+}
+
+/* ============================================================
+   Brand mark 品牌方塊 — .ds-brandmark
+   用途：tan 漸層圓角方塊、白色「厝」字。
+   對應畫面：頁首 logo。
+   ============================================================ */
+.ds-brandmark {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--ds-space-10);
+  height: var(--ds-space-10);
+  border-radius: var(--ds-radius-md);
+  background-image: linear-gradient(
+    135deg,
+    var(--ds-color-accent-tan),
+    var(--ds-color-hero-to)
+  );
+  color: var(--ds-color-on-primary);
+  font-family: var(--ds-font-serif);
+  font-size: var(--ds-text-h2);
+  font-weight: 700;
+  box-shadow: var(--ds-shadow-sm);
+}
+
+/* ============================================================
+   Hero 主視覺 — .ds-hero
+   用途：圓角大圖，底部覆蓋民宿名＋標語（白字）。
+   對應畫面：首頁 hero（tan→深褐漸層 placeholder）。
+   變體：右上可放「環境照」徽章
+   ============================================================ */
+.ds-hero {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  min-height: 220px;
+  padding: var(--ds-space-6);
+  border-radius: var(--ds-radius-2xl);
+  overflow: hidden;
+  background-image: linear-gradient(
+    160deg,
+    var(--ds-color-hero-from),
+    var(--ds-color-hero-to)
+  );
+  box-shadow: var(--ds-shadow-card);
+}
+
+/* 底部由透明到深，讓白字可讀 */
+.ds-hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(
+    to top,
+    var(--ds-color-hero-scrim),
+    transparent 60%
+  );
+  pointer-events: none;
+}
+
+.ds-hero__title,
+.ds-hero__tagline {
+  position: relative;
+  z-index: 1;
+  color: var(--ds-color-on-primary);
+}
+
+.ds-hero__title {
+  font-family: var(--ds-font-serif);
+  font-size: var(--ds-text-h1);
+  line-height: var(--ds-text-h1-lh);
+  font-weight: var(--ds-text-h1-weight);
+}
+
+.ds-hero__tagline {
+  margin-top: var(--ds-space-2);
+  font-family: var(--ds-font-sans);
+  font-size: var(--ds-text-body-sm);
+  line-height: var(--ds-text-body-sm-lh);
+  opacity: .92;
+}
+
+/* 右上角「環境照」徽章 */
+.ds-hero__badge {
+  position: absolute;
+  top: var(--ds-space-4);
+  right: var(--ds-space-4);
+  z-index: 1;
+}
+
+/* ============================================================
+   Upload dropzone 上傳框 — .ds-upload
+   用途：證件上傳，虛線框；亦可顯示已上傳檔案列。
+   對應畫面：＋ 拍照或上傳證件 / 已上傳（縮圖＋檔名＋大小＋重新上傳）。
+   ============================================================ */
+.ds-upload {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ds-space-2);
+  padding: var(--ds-space-8) var(--ds-space-5);
+  background-color: var(--ds-color-surface);
+  border: 2px dashed var(--ds-color-border-strong);
+  border-radius: var(--ds-radius-lg);
+  color: var(--ds-color-ink-secondary);
+  text-align: center;
+  cursor: pointer;
+  transition:
+    border-color var(--ds-dur) var(--ds-ease),
+    background-color var(--ds-dur) var(--ds-ease);
+}
+
+.ds-upload:hover {
+  border-color: var(--ds-color-primary);
+  background-color: var(--ds-color-primary-soft);
+}
+
+.ds-upload:focus-visible,
+.ds-upload:focus-within {
+  outline: none;
+  border-color: var(--ds-color-primary);
+  box-shadow: var(--ds-shadow-focus);
+}
+
+.ds-upload__icon {
+  font-size: var(--ds-text-h1);
+  color: var(--ds-color-primary);
+  line-height: 1;
+}
+
+.ds-upload__hint {
+  font-family: var(--ds-font-sans);
+  font-size: var(--ds-text-body-sm);
+}
+
+/* 已上傳檔案列（縮圖＋檔名＋大小＋重新上傳） */
+.ds-upload__file {
+  display: flex;
+  align-items: center;
+  gap: var(--ds-space-3);
+  padding: var(--ds-space-3) var(--ds-space-4);
+  background-color: var(--ds-color-surface);
+  border: 1px solid var(--ds-color-border);
+  border-radius: var(--ds-radius-md);
+}
+
+.ds-upload__thumb {
+  flex: none;
+  width: var(--ds-space-12);
+  height: var(--ds-space-12);
+  border-radius: var(--ds-radius-sm);
+  background-color: var(--ds-color-chip-bg);
+  object-fit: cover;
+}
+
+.ds-upload__meta {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-space-1);
+}
+
+.ds-upload__filename {
+  font-family: var(--ds-font-sans);
+  font-size: var(--ds-text-body-sm);
+  color: var(--ds-color-ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ds-upload__size {
+  font-family: var(--ds-font-mono);
+  font-size: var(--ds-text-caption);
+  font-variant-numeric: tabular-nums;
+  color: var(--ds-color-ink-muted);
+}
+
+/* ============================================================
+   Door code 密碼卡 — .ds-doorcode
+   用途：赭紅實心大卡，白色大密碼，含徽章與說明。
+   對應畫面：大門密碼 8842（住宿期間有效）。
+   ============================================================ */
+.ds-doorcode {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--ds-space-4);
+  padding: var(--ds-space-8) var(--ds-space-6);
+  background-color: var(--ds-color-primary);
+  border-radius: var(--ds-radius-2xl);
+  color: var(--ds-color-on-primary);
+  text-align: center;
+  box-shadow: var(--ds-shadow-card);
+}
+
+.ds-doorcode__label {
+  font-family: var(--ds-text-caption-family);
+  font-size: var(--ds-text-caption);
+  letter-spacing: var(--ds-text-caption-tracking);
+  text-transform: uppercase;
+  opacity: .9;
+}
+
+/* 大密碼 code-xl，字距寬 */
+.ds-doorcode__code {
+  font-family: var(--ds-font-mono);
+  font-size: var(--ds-text-code-xl);
+  line-height: var(--ds-text-code-xl-lh);
+  font-weight: var(--ds-text-code-xl-weight);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: .12em;
+}
+
+.ds-doorcode__note {
+  font-family: var(--ds-font-sans);
+  font-size: var(--ds-text-body-sm);
+  line-height: var(--ds-text-body-sm-lh);
+  opacity: .9;
+}
+
+/* ============================================================
+   Info list 資訊列 — .ds-infolist
+   用途：定義列表，label 左、值右，分隔線，可帶動作。
+   對應畫面：地址 / 交通 / Wi-Fi（導航 / 複製）。
+   ============================================================ */
+.ds-infolist {
+  margin: 0;
+  padding: 0;
+}
+
+.ds-infolist__row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--ds-space-4);
+  padding: var(--ds-space-4) 0;
+  border-bottom: 1px solid var(--ds-color-border);
+}
+.ds-infolist__row:last-child {
+  border-bottom: none;
+}
+
+.ds-infolist__label {
+  flex: none;
+  font-family: var(--ds-text-caption-family);
+  font-size: var(--ds-text-caption);
+  letter-spacing: var(--ds-text-caption-tracking);
+  text-transform: uppercase;
+  color: var(--ds-color-ink-secondary);
+}
+
+.ds-infolist__value {
+  flex: 1;
+  font-family: var(--ds-font-sans);
+  font-size: var(--ds-text-body);
+  color: var(--ds-color-ink);
+  text-align: right;
+}
+
+/* 行內動作（導航 / 複製）：小型文字按鈕 */
+.ds-infolist__action {
+  margin-left: var(--ds-space-3);
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--ds-color-primary-ink);
+  font-family: var(--ds-font-sans);
+  font-size: var(--ds-text-body-sm);
+  font-weight: 600;
+  cursor: pointer;
+}
+.ds-infolist__action:hover {
+  color: var(--ds-color-primary-hover);
+  text-decoration: underline;
+}
+.ds-infolist__action:focus-visible {
+  outline: none;
+  border-radius: var(--ds-radius-sm);
+  box-shadow: var(--ds-shadow-focus);
+}
+
+/* ============================================================
+   Notice 通知橫幅 — .ds-notice
+   用途：淺底圓角橫幅，左圖示。
+   對應畫面：此訂單已完成付款（綠）/ 證件僅用於…（info ⓘ）。
+   變體：--success / --info
+   ============================================================ */
+.ds-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--ds-space-3);
+  padding: var(--ds-space-4) var(--ds-space-5);
+  border-radius: var(--ds-radius-lg);
+  border: 1px solid transparent;
+  font-family: var(--ds-font-sans);
+  font-size: var(--ds-text-body-sm);
+  line-height: var(--ds-text-body-sm-lh);
+  /* 預設：中性淡底 */
+  background-color: var(--ds-color-bg-sunken);
+  color: var(--ds-color-ink-secondary);
+}
+
+.ds-notice__icon {
+  flex: none;
+  line-height: 1.4;
+  font-size: var(--ds-text-body);
+}
+
+/* 變體 --success：已完成付款（綠） */
+.ds-notice--success {
+  background-color: var(--ds-color-success-bg);
+  border-color: var(--ds-color-success-bg);
+  color: var(--ds-color-success-ink);
+}
+
+/* 變體 --info：說明（含 ⓘ） */
+.ds-notice--info {
+  background-color: var(--ds-color-primary-soft);
+  border-color: var(--ds-color-primary-soft);
+  color: var(--ds-color-ink-secondary);
+}
+.ds-notice--info .ds-notice__icon {
+  color: var(--ds-color-primary);
+}
+
+/* ============================================================
+   Footer contact 聯絡列 — .ds-contact
+   用途：客服聯絡區，含通訊軟體 chips。
+   對應畫面：需要協助?聯繫客服（LINE官方 / WhatsApp / KakaoTalk）。
+   ============================================================ */
+.ds-contact {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-space-3);
+  padding: var(--ds-space-5);
+  text-align: center;
+}
+
+.ds-contact__title {
+  font-family: var(--ds-font-sans);
+  font-size: var(--ds-text-body-sm);
+  color: var(--ds-color-ink-secondary);
+}
+
+.ds-contact__links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--ds-space-2);
+}
+
+/* 聯絡 chip（可點）：pill、chip 底 */
+.ds-contact__link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ds-space-1);
+  padding: var(--ds-space-2) var(--ds-space-4);
+  background-color: var(--ds-color-chip-bg);
+  border-radius: var(--ds-radius-pill);
+  color: var(--ds-color-ink);
+  font-family: var(--ds-font-sans);
+  font-size: var(--ds-text-body-sm);
+  font-weight: 600;
+  text-decoration: none;
+  transition:
+    background-color var(--ds-dur) var(--ds-ease),
+    color var(--ds-dur) var(--ds-ease);
+}
+.ds-contact__link:hover {
+  background-color: var(--ds-color-primary-soft);
+  color: var(--ds-color-primary);
+}
+.ds-contact__link:focus-visible {
+  outline: none;
+  box-shadow: var(--ds-shadow-focus);
+}
+
+/* ============================================================
+   Divider 分隔線 — .ds-divider
+   用途：border 色細線。
+   對應畫面：卡片 / 區塊之間的分隔。
+   ============================================================ */
+.ds-divider {
+  height: 1px;
+  border: none;
+  margin: var(--ds-space-5) 0;
+  background-color: var(--ds-color-border);
+}
