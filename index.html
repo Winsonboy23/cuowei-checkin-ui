@@ -80,6 +80,7 @@
     .grid { display: grid; gap: 26px; }
     .grid.mobile { grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); }
     .grid.pc     { grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); }
+    .grid.admin  { grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); }
 
     .panel { display: none; }
     .panel.active { display: block; animation: fade .35s ease; }
@@ -108,6 +109,14 @@
       justify-content: center;
     }
     .grid.pc .thumb img { height: 100%; object-fit: contain; object-position: top center; }
+    .grid.admin .thumb {
+      padding: 14px 14px 0;
+      aspect-ratio: 1514 / 947;       /* 統一比例框 → 後台卡片等高、標籤對齊 */
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+    }
+    .grid.admin .thumb img { height: 100%; object-fit: contain; object-position: top center; }
     figcaption {
       display: flex; align-items: baseline; gap: 10px;
       padding: 14px 18px 16px; font-size: 14.5px;
@@ -152,11 +161,12 @@
     <h1>自助報到系統 · UI 設計稿</h1>
     <p class="lede">
       旅客從連結進入即可自助完成報到：確認訂單、上傳證件、同意住宿須知、線上付款，
-      完成後直接取得大門與房門密碼。以下為手機版與電腦版的完整流程畫面。
+      完成後直接取得大門與房門密碼。以下為旅客端手機版、電腦版，以及民宿後台管理的完整畫面。
     </p>
     <div class="meta-row">
       <span class="pill">手機版 9 頁</span>
       <span class="pill">電腦版 9 頁</span>
+      <span class="pill">後台 4 頁</span>
       <a class="pill pill-cta" href="design-system/styleguide.html">設計系統 →</a>
     </div>
   </header>
@@ -165,6 +175,7 @@
     <div class="tabs-inner" role="tablist">
       <button class="tab" role="tab" aria-selected="true"  data-panel="mobile">手機版<span class="count">9</span></button>
       <button class="tab" role="tab" aria-selected="false" data-panel="pc">電腦版<span class="count">9</span></button>
+      <button class="tab" role="tab" aria-selected="false" data-panel="admin">後台<span class="count">4</span></button>
     </div>
   </nav>
 
@@ -174,6 +185,9 @@
     </section>
     <section class="panel" id="panel-pc">
       <div class="grid pc" id="grid-pc"></div>
+    </section>
+    <section class="panel" id="panel-admin">
+      <div class="grid admin" id="grid-admin"></div>
     </section>
   </main>
 
@@ -214,6 +228,12 @@
         ["p08", "報到完成"],
         ["p09", "民宿資訊"],
       ],
+      admin: [
+        ["a01", "訂單管理"],
+        ["a02", "訂單詳情"],
+        ["a03", "證件抽查"],
+        ["a04", "住客清單匯出"],
+      ],
     };
 
     // Flat list for lightbox navigation, tracks which panel is active
@@ -232,6 +252,7 @@
     }
     buildGrid("mobile");
     buildGrid("pc");
+    buildGrid("admin");
 
     // Tabs
     let current = "mobile";
