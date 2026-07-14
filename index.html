@@ -65,7 +65,7 @@
       border-bottom: 1px solid var(--line);
       margin-top: 32px;
     }
-    .tabs-inner { max-width: 1120px; margin: 0 auto; padding: 12px 24px; display: flex; gap: 8px; }
+    .tabs-inner { max-width: 1120px; margin: 0 auto; padding: 12px 24px 8px; display: flex; gap: 8px; }
     .tab {
       border: 0; cursor: pointer; font: inherit; font-weight: 600; font-size: 15px;
       padding: 9px 20px; border-radius: 999px; color: var(--muted-text);
@@ -74,6 +74,18 @@
     .tab .count { font-size: 12px; opacity: .7; margin-left: 4px; }
     .tab[aria-selected="true"] { background: var(--accent); color: #fff; box-shadow: var(--shadow); }
     .tab:not([aria-selected="true"]):hover { background: var(--accent-soft); color: #8a5233; }
+
+    /* 前台底下的裝置子分頁 */
+    .subtabs-inner { max-width: 1120px; margin: 0 auto; padding: 0 24px 12px 26px; display: flex; gap: 8px; align-items: center; }
+    .subtabs-inner::before { content: ""; width: 14px; height: 1px; background: var(--line); margin-right: 2px; flex: none; }
+    .subtab {
+      border: 0; cursor: pointer; font: inherit; font-weight: 600; font-size: 13.5px;
+      padding: 6px 15px; border-radius: 999px; color: var(--muted-text);
+      background: transparent; transition: .18s;
+    }
+    .subtab .count { font-size: 11px; opacity: .7; margin-left: 4px; }
+    .subtab[aria-selected="true"] { background: var(--accent-soft); color: #8a5233; }
+    .subtab:not([aria-selected="true"]):hover { background: color-mix(in srgb, var(--accent-soft) 60%, transparent); color: #8a5233; }
 
     /* ---- Gallery ---- */
     main { max-width: 1120px; margin: 0 auto; padding: 34px 24px 90px; }
@@ -172,10 +184,13 @@
   </header>
 
   <nav class="tabs">
-    <div class="tabs-inner" role="tablist">
-      <button class="tab" role="tab" aria-selected="true"  data-panel="mobile">手機版<span class="count">9</span></button>
-      <button class="tab" role="tab" aria-selected="false" data-panel="pc">電腦版<span class="count">9</span></button>
-      <button class="tab" role="tab" aria-selected="false" data-panel="admin">後台<span class="count">4</span></button>
+    <div class="tabs-inner" role="tablist" aria-label="介面分類">
+      <button class="tab" role="tab" aria-selected="true"  data-group="front">前台</button>
+      <button class="tab" role="tab" aria-selected="false" data-group="admin">後台<span class="count">4</span></button>
+    </div>
+    <div class="subtabs-inner" id="subtabs" role="tablist" aria-label="前台裝置">
+      <button class="subtab" role="tab" aria-selected="true"  data-panel="mobile">手機版<span class="count">9</span></button>
+      <button class="subtab" role="tab" aria-selected="false" data-panel="pc">電腦版<span class="count">9</span></button>
     </div>
   </nav>
 
@@ -254,18 +269,29 @@
     buildGrid("pc");
     buildGrid("admin");
 
-    // Tabs
-    let current = "mobile";
-    document.querySelectorAll(".tab").forEach((tab) => {
-      tab.addEventListener("click", () => {
-        current = tab.dataset.panel;
-        document.querySelectorAll(".tab").forEach((t) =>
-          t.setAttribute("aria-selected", t === tab));
-        document.querySelectorAll(".panel").forEach((p) =>
-          p.classList.toggle("active", p.id === "panel-" + current));
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      });
-    });
+    // Tabs — 前台（手機 / 電腦子分頁）與 後台 兩層
+    const primaryTabs = document.querySelectorAll(".tab[data-group]");
+    const subTabs = document.querySelectorAll(".subtab[data-panel]");
+    const subtabsBar = document.getElementById("subtabs");
+    let frontPanel = "mobile"; // 記住前台最後選的裝置
+
+    function showPanel(id) {
+      document.querySelectorAll(".panel").forEach((p) =>
+        p.classList.toggle("active", p.id === "panel-" + id));
+    }
+    function selectGroup(group) {
+      primaryTabs.forEach((t) => t.setAttribute("aria-selected", t.dataset.group === group));
+      subtabsBar.style.display = group === "front" ? "" : "none";
+      showPanel(group === "front" ? frontPanel : "admin");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+    primaryTabs.forEach((t) => t.addEventListener("click", () => selectGroup(t.dataset.group)));
+    subTabs.forEach((t) => t.addEventListener("click", () => {
+      frontPanel = t.dataset.panel;
+      subTabs.forEach((s) => s.setAttribute("aria-selected", s === t));
+      showPanel(frontPanel);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }));
 
     // Lightbox
     const lb = document.getElementById("lb");
