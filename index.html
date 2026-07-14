@@ -65,7 +65,7 @@
       border-bottom: 1px solid var(--line);
       margin-top: 32px;
     }
-    .tabs-inner { max-width: 1120px; margin: 0 auto; padding: 12px 24px 8px; display: flex; gap: 8px; }
+    .tabs-inner { max-width: 1120px; margin: 0 auto; padding: 12px 24px; display: flex; gap: 8px; }
     .tab {
       border: 0; cursor: pointer; font: inherit; font-weight: 600; font-size: 15px;
       padding: 9px 20px; border-radius: 999px; color: var(--muted-text);
@@ -75,9 +75,8 @@
     .tab[aria-selected="true"] { background: var(--accent); color: #fff; box-shadow: var(--shadow); }
     .tab:not([aria-selected="true"]):hover { background: var(--accent-soft); color: #8a5233; }
 
-    /* 前台底下的裝置子分頁 */
-    .subtabs-inner { max-width: 1120px; margin: 0 auto; padding: 0 24px 12px 26px; display: flex; gap: 8px; align-items: center; }
-    .subtabs-inner::before { content: ""; width: 14px; height: 1px; background: var(--line); margin-right: 2px; flex: none; }
+    /* 前台底下的裝置子分頁（放在 divider 下方） */
+    .subtabs-inner { max-width: 1120px; margin: 0 auto; padding: 16px 24px 0; display: flex; gap: 8px; align-items: center; }
     .subtab {
       border: 0; cursor: pointer; font: inherit; font-weight: 600; font-size: 13.5px;
       padding: 6px 15px; border-radius: 999px; color: var(--muted-text);
@@ -88,7 +87,7 @@
     .subtab:not([aria-selected="true"]):hover { background: color-mix(in srgb, var(--accent-soft) 60%, transparent); color: #8a5233; }
 
     /* ---- Gallery ---- */
-    main { max-width: 1120px; margin: 0 auto; padding: 34px 24px 90px; }
+    main { max-width: 1120px; margin: 0 auto; padding: 16px 24px 90px; }
     .grid { display: grid; gap: 26px; }
     .grid.mobile { grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); }
     .grid.pc     { grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); }
@@ -188,11 +187,12 @@
       <button class="tab" role="tab" aria-selected="true"  data-group="front">前台</button>
       <button class="tab" role="tab" aria-selected="false" data-group="admin">後台<span class="count">4</span></button>
     </div>
-    <div class="subtabs-inner" id="subtabs" role="tablist" aria-label="前台裝置">
-      <button class="subtab" role="tab" aria-selected="true"  data-panel="mobile">手機版<span class="count">9</span></button>
-      <button class="subtab" role="tab" aria-selected="false" data-panel="pc">電腦版<span class="count">9</span></button>
-    </div>
   </nav>
+
+  <div class="subtabs-inner" id="subtabs" role="tablist" aria-label="前台裝置">
+    <button class="subtab" role="tab" aria-selected="true"  data-panel="mobile">手機版<span class="count">9</span></button>
+    <button class="subtab" role="tab" aria-selected="false" data-panel="pc">電腦版<span class="count">9</span></button>
+  </div>
 
   <main>
     <section class="panel active" id="panel-mobile">
