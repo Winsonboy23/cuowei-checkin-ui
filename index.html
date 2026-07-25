@@ -122,12 +122,39 @@
     .grid.pc .thumb img { height: 100%; object-fit: contain; object-position: top center; }
     .grid.admin .thumb {
       padding: 14px 14px 0;
-      aspect-ratio: 1514 / 947;       /* 統一比例框 → 後台卡片等高、標籤對齊 */
+      aspect-ratio: var(--ar, 1514 / 947);  /* 每節以節內最高圖設定比例框 → 節內卡片等高、標籤對齊 */
       display: flex;
       align-items: flex-start;
       justify-content: center;
     }
     .grid.admin .thumb img { height: 100%; object-fit: contain; object-position: top center; }
+
+    /* ---- 後台分節（依側邊欄資訊架構） ---- */
+    .jumpbar { display: flex; flex-wrap: wrap; gap: 8px; margin: 6px 0 4px; }
+    .jump {
+      border: 1px solid var(--line); cursor: pointer; font: inherit; font-weight: 600; font-size: 13px;
+      padding: 6px 14px; border-radius: 999px; color: var(--muted-text); background: var(--card);
+      transition: .18s;
+    }
+    .jump .count { font-size: 11px; opacity: .7; margin-left: 4px; }
+    .jump:hover { background: var(--accent-soft); border-color: transparent; color: #8a5233; }
+    .admin-group {
+      display: flex; align-items: center; gap: 14px;
+      font-size: 13px; font-weight: 700; letter-spacing: .14em; color: var(--muted-text);
+      margin: 40px 0 18px;
+    }
+    .admin-group::after { content: ""; flex: 1; border-top: 1px solid var(--line); }
+    .jumpbar + .admin-group { margin-top: 26px; }
+    .admin-sec { scroll-margin-top: 84px; }
+    .admin-sec + .admin-sec { margin-top: 36px; }
+    .admin-sec-head { display: flex; align-items: baseline; gap: 10px; margin-bottom: 14px; }
+    .admin-sec-head h2 { font-size: 17px; font-weight: 700; letter-spacing: .02em; }
+    .admin-sec-head .count { font-size: 12.5px; color: var(--muted-text); }
+    .tag-modal {
+      flex: none; margin-left: auto; align-self: center;
+      font-size: 11px; font-weight: 600; color: var(--muted-text);
+      border: 1px solid var(--line); border-radius: 6px; padding: 2px 7px;
+    }
     figcaption {
       display: flex; align-items: baseline; gap: 10px;
       padding: 14px 18px 16px; font-size: 14.5px;
@@ -140,6 +167,17 @@
 
     footer { max-width: 1120px; margin: 0 auto; padding: 0 24px 60px; color: var(--muted-text); font-size: 13px; }
     footer hr { border: 0; border-top: 1px solid var(--line); margin-bottom: 20px; }
+
+    /* ---- 懸浮「回到最上層」 ---- */
+    .to-top {
+      position: fixed; right: 26px; bottom: 26px; z-index: 50;
+      width: 46px; height: 46px; border-radius: 999px; border: 0; cursor: pointer;
+      background: var(--accent); color: #fff; font-size: 20px;
+      display: grid; place-items: center; box-shadow: var(--shadow);
+      opacity: 0; pointer-events: none; transform: translateY(8px); transition: .25s;
+    }
+    .to-top.show { opacity: 1; pointer-events: auto; transform: none; }
+    .to-top:hover { background: #a0512e; }
 
     /* ---- Lightbox ---- */
     .lb { position: fixed; inset: 0; z-index: 60; display: none;
@@ -179,7 +217,8 @@
   <nav class="tabs">
     <div class="tabs-inner" role="tablist" aria-label="介面分類">
       <button class="tab" role="tab" aria-selected="true"  data-group="front">前台</button>
-      <button class="tab" role="tab" aria-selected="false" data-group="admin">後台<span class="count">13</span></button>
+      <button class="tab" role="tab" aria-selected="false" data-group="admin">後台<span class="count">18</span></button>
+      <a class="pill pill-cta" href="flow.html">報到流程總覽 →</a>
       <!-- 暫時隱藏：設計系統入口（要恢復時取消此註解即可）
       <a class="pill pill-cta" href="design-system/styleguide.html">設計系統 →</a>
       -->
@@ -198,15 +237,15 @@
     <section class="panel" id="panel-pc">
       <div class="grid pc" id="grid-pc"></div>
     </section>
-    <section class="panel" id="panel-admin">
-      <div class="grid admin" id="grid-admin"></div>
-    </section>
+    <section class="panel" id="panel-admin"></section>
   </main>
 
   <footer>
     <hr />
     厝味・九份山居 — 自助報到系統 UI 設計稿 · 本頁僅供業者預覽，畫面與資料為示意。
   </footer>
+
+  <button class="to-top" id="toTop" aria-label="回到最上層">↑</button>
 
   <div class="lb" id="lb" aria-hidden="true">
     <button class="lb-close" id="lbClose" aria-label="關閉">✕</button>
@@ -240,22 +279,43 @@
         ["p08", "報到完成"],
         ["p09", "民宿資訊"],
       ],
-      admin: [
-        ["a01", "訂單管理"],
-        ["a02", "訂單詳情"],
-        ["a03", "證件抽查"],
-        ["a04", "住客清單匯出"],
-        ["a05", "門禁管理"],
-        ["a06", "館別設定 1"],
-        ["a07", "館別設定 2"],
-        ["a08", "館別設定 3"],
-        ["a09", "館別設定 4"],
-        ["a10", "館別設定 5"],
-        ["a11", "館別設定 6"],
-        ["a12", "權限管理"],
-        ["a13", "建立管理員"],
-      ],
     };
+
+    // 後台：依側邊欄資訊架構分節（營運 / 設定）
+    // ar = 節內最高圖的寬高比（比例框）；item 第三欄 true = 彈窗狀態圖
+    const ADMIN_SECTIONS = [
+      { group: "營運", name: "訂單管理", ar: "1514 / 1019", items: [
+        ["a01", "訂單列表"],
+        ["a02", "訂單詳情"],
+        ["a03", "訂單詳情 · 編輯訂單", true],
+      ]},
+      { name: "證件抽查", ar: "1514 / 802", items: [
+        ["a04", "證件抽查"],
+      ]},
+      { name: "住客清單匯出", ar: "1514 / 862", items: [
+        ["a05", "住客清單匯出"],
+      ]},
+      { group: "設定", name: "館別設定", ar: "1514 / 1091", items: [
+        ["a06", "民宿資訊"],
+        ["a07", "房間與鑰匙盒"],
+        ["a08", "房間與鑰匙盒 · 編輯房間", true],
+        ["a09", "房間與鑰匙盒 · 新增房間", true],
+        ["a10", "入住步驟與退房"],
+        ["a11", "住宿須知"],
+        ["a12", "訂房與客服"],
+        ["a13", "Email 通知"],
+      ]},
+      { name: "門禁管理", ar: "1216 / 714", items: [
+        ["a14", "門禁管理"],
+        ["a15", "新增密碼", true],
+      ]},
+      { name: "權限管理", ar: "1514 / 859", items: [
+        ["a16", "管理員列表"],
+        ["a17", "建立管理員", true],
+        ["a18", "編輯管理員", true],
+      ]},
+    ];
+    DATA.admin = ADMIN_SECTIONS.flatMap((s) => s.items);
 
     // Flat list for lightbox navigation, tracks which panel is active
     function buildGrid(kind) {
@@ -271,9 +331,54 @@
         grid.appendChild(fig);
       });
     }
+    // 後台面板：跳轉列 + 分組（營運/設定）+ 分節網格，編號全域連號
+    function buildAdmin() {
+      const panel = document.getElementById("panel-admin");
+      const jumpbar = document.createElement("div");
+      jumpbar.className = "jumpbar";
+      panel.appendChild(jumpbar);
+      let idx = 0;
+      ADMIN_SECTIONS.forEach((sec, s) => {
+        if (sec.group) {
+          const g = document.createElement("div");
+          g.className = "admin-group";
+          g.textContent = sec.group;
+          panel.appendChild(g);
+        }
+        const wrap = document.createElement("section");
+        wrap.className = "admin-sec";
+        wrap.id = "sec-" + s;
+        wrap.innerHTML =
+          '<div class="admin-sec-head"><h2>' + sec.name + '</h2>' +
+          '<span class="count">' + sec.items.length + ' 張</span></div>';
+        const grid = document.createElement("div");
+        grid.className = "grid admin";
+        grid.style.setProperty("--ar", sec.ar);
+        sec.items.forEach(([id, title, modal]) => {
+          const i = idx++;
+          const fig = document.createElement("figure");
+          fig.innerHTML =
+            '<div class="thumb"><img loading="lazy" src="assets/admin/' + id +
+            '.png" alt="' + title + '"></div>' +
+            '<figcaption><span class="no">' + String(i + 1).padStart(2, "0") +
+            '</span><span class="t">' + title + '</span>' +
+            (modal ? '<span class="tag-modal">彈窗</span>' : '') + '</figcaption>';
+          fig.addEventListener("click", () => openLb("admin", i));
+          grid.appendChild(fig);
+        });
+        wrap.appendChild(grid);
+        panel.appendChild(wrap);
+        const chip = document.createElement("button");
+        chip.className = "jump";
+        chip.innerHTML = sec.name + '<span class="count">' + sec.items.length + '</span>';
+        chip.addEventListener("click", () => wrap.scrollIntoView({ behavior: "smooth" }));
+        jumpbar.appendChild(chip);
+      });
+    }
+
     buildGrid("mobile");
     buildGrid("pc");
-    buildGrid("admin");
+    buildAdmin();
 
     // Tabs — 前台（手機 / 電腦子分頁）與 後台 兩層
     const primaryTabs = document.querySelectorAll(".tab[data-group]");
@@ -325,6 +430,11 @@
       if (e.key === "ArrowLeft") step(-1);
       if (e.key === "ArrowRight") step(1);
     });
+
+    // 懸浮「回到最上層」：往下捲才浮現
+    const toTop = document.getElementById("toTop");
+    window.addEventListener("scroll", () => toTop.classList.toggle("show", window.scrollY > 400), { passive: true });
+    toTop.addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
   </script>
 </body>
 </html>

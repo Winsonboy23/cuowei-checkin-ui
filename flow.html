@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>厝味・九份山居 — 旅客報到流程總覽</title>
+  <style>
+    :root {
+      --bg: #f7eedd;
+      --bg-soft: #faf3e6;
+      --card: #fffdf8;
+      --ink: #3a342c;
+      --muted-text: #9b8d76;
+      --accent: #b5623c;
+      --accent-soft: #efe6d5;
+      --line: #e7dcc6;
+      --shadow: 0 18px 40px -24px rgba(88, 62, 33, .45);
+      /* 狀態色 */
+      --state-unpaid: #b5623c;
+      --state-unpaid-soft: #f6e5d6;
+      --state-unpaid-text: #8a5233;
+      --state-paid: #4a7351;
+      --state-paid-soft: #e5eedd;
+      --state-paid-text: #3c5f42;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    .wrap { max-width: 1120px; margin: 0 auto; padding: 48px 24px 90px; }
+
+    /* ---- Header ---- */
+    .head-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .top-pill {
+      display: inline-block; font-size: 13px; padding: 6px 14px; border-radius: 999px;
+      background: var(--accent-soft); color: #8a5233; font-weight: 600;
+    }
+    .gallery-link {
+      font-size: 13.5px; font-weight: 600; color: #8a5233; text-decoration: none;
+      padding: 6px 14px; border-radius: 999px; border: 1px solid var(--line);
+      background: var(--card); transition: .18s;
+    }
+    .gallery-link:hover { background: var(--accent-soft); border-color: transparent; }
+    h1 { font-size: clamp(26px, 4vw, 38px); font-weight: 800; letter-spacing: .02em; margin-top: 14px; }
+    .lede { margin-top: 10px; max-width: 660px; font-size: 15.5px; color: #6f6350; }
+    .legend { display: flex; gap: 16px; margin-top: 18px; flex-wrap: wrap; font-size: 13.5px; color: #6f6350; }
+    .legend span { display: inline-flex; align-items: center; gap: 7px; }
+    .dot { width: 11px; height: 11px; border-radius: 3px; display: inline-block; }
+    .dot.unpaid { background: var(--state-unpaid); }
+    .dot.paid { background: var(--state-paid); }
+    .dot.na { background: #cbbfa4; }
+
+    /* ---- 手機版 / 電腦版切換 ---- */
+    .device-tabs { display: flex; gap: 8px; margin-top: 20px; }
+    .device-tab {
+      cursor: pointer; font: inherit; font-weight: 600; font-size: 13.5px;
+      padding: 7px 18px; border-radius: 999px; color: var(--muted-text);
+      background: var(--card); border: 1px solid var(--line); transition: .18s;
+    }
+    .device-tab[aria-selected="true"] { background: var(--accent); color: #fff; border-color: transparent; box-shadow: var(--shadow); }
+    .device-tab:not([aria-selected="true"]):hover { background: var(--accent-soft); color: #8a5233; }
+
+    /* 電腦版（橫式截圖）：圖放寬、流程列改 2×2 */
+    body.pc .shot { max-width: 470px; margin-left: auto; margin-right: auto; }
+    body.pc .flow-grid { grid-template-columns: 1fr 1fr; row-gap: 26px; }
+    body.pc .flow-cell:nth-child(3)::before { content: ""; }
+    body.pc .appendix .shot { max-width: 320px; margin-left: 0; }
+
+    /* ---- Stage ---- */
+    .stage { margin-top: 54px; }
+    .stage-head { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+    .stage-no {
+      font-size: 12.5px; font-weight: 700; letter-spacing: .12em;
+      color: #8a5233; background: var(--accent-soft); padding: 4px 12px; border-radius: 999px;
+    }
+    .stage-title { font-size: 20px; font-weight: 700; }
+    .stage-desc { margin-top: 6px; font-size: 14px; color: var(--muted-text); max-width: 720px; }
+
+    /* ---- 入口卡 ---- */
+    .entries { display: grid; grid-template-columns: 1fr 1fr; gap: 26px; margin-top: 20px; align-items: stretch; }
+    .lane { display: flex; flex-direction: column; align-items: center; }
+    .entry-card {
+      width: 100%; background: var(--card); border: 1px solid var(--line); border-radius: 16px;
+      padding: 18px 22px; box-shadow: var(--shadow);
+    }
+    .entry-card h3 { font-size: 16.5px; font-weight: 700; }
+    .entry-card p { font-size: 13.5px; color: var(--muted-text); margin-top: 4px; }
+    .lane-spine {
+      flex: 1; min-height: 60px; display: flex; flex-direction: column; align-items: center;
+      justify-content: center; gap: 10px; padding: 14px 0 0;
+    }
+    .spine-line { flex: 1; width: 0; border-left: 2px dashed #cbbfa4; min-height: 22px; }
+    .spine-label {
+      font-size: 12.5px; color: #8a5233; background: var(--accent-soft);
+      padding: 4px 12px; border-radius: 999px; white-space: nowrap;
+    }
+    .arrow-down { color: #b3a180; font-size: 15px; line-height: 1; }
+
+    /* ---- 手機截圖卡 ---- */
+    .shot { width: 100%; max-width: 258px; }
+    .shot figure {
+      background: var(--card); border: 1px solid var(--line); border-radius: 16px;
+      overflow: hidden; box-shadow: var(--shadow);
+      cursor: zoom-in; transition: .2s;
+    }
+    .shot figure:hover { transform: translateY(-4px); border-color: #d9c9a6; }
+    .shot .img { background: var(--bg-soft); padding: 12px 12px 0; }
+    .shot img { width: 100%; height: auto; display: block; border-radius: 8px 8px 0 0; }
+    .shot figcaption { padding: 10px 14px 12px; display: flex; align-items: center; gap: 8px; }
+    .page-no {
+      font-size: 11.5px; font-weight: 700; color: #8a5233; background: var(--accent-soft);
+      border-radius: 999px; padding: 2px 9px; white-space: nowrap;
+    }
+    .page-name { font-size: 13px; font-weight: 600; }
+    .cta-note { font-size: 12.5px; color: var(--muted-text); margin-top: 8px; text-align: center; }
+    .cta-note b { color: var(--state-unpaid-text); font-weight: 700; }
+    .lane.paid .cta-note b { color: var(--state-paid-text); }
+
+    /* ---- 匯流橫幅 ---- */
+    .merge-bar {
+      margin-top: 26px; border-radius: 14px; border: 1px dashed #cbbfa4;
+      background: color-mix(in srgb, var(--card) 60%, transparent);
+      padding: 13px 20px; display: flex; align-items: center; gap: 12px; justify-content: center;
+    }
+    .merge-bar .diamond {
+      width: 12px; height: 12px; background: var(--accent); transform: rotate(45deg); border-radius: 2px; flex: none;
+    }
+    .merge-bar .t { font-size: 15px; font-weight: 700; }
+    .merge-bar .s { font-size: 13px; color: var(--muted-text); }
+
+    /* ---- 狀態分岔 ---- */
+    .branch { display: grid; grid-template-columns: 1fr 1fr; gap: 26px; margin-top: 24px; }
+    .state-col {
+      border-radius: 18px; padding: 20px 20px 24px; display: flex; flex-direction: column; align-items: center;
+      border: 1px solid var(--line); background: color-mix(in srgb, var(--card) 55%, transparent);
+    }
+    .state-col.unpaid { border-top: 4px solid var(--state-unpaid); }
+    .state-col.paid { border-top: 4px solid var(--state-paid); }
+    .state-banner {
+      display: inline-flex; align-items: center; gap: 8px; font-size: 13.5px; font-weight: 700;
+      border-radius: 999px; padding: 6px 16px; margin-bottom: 14px;
+    }
+    .state-col.unpaid .state-banner { background: var(--state-unpaid-soft); color: var(--state-unpaid-text); }
+    .state-col.paid .state-banner { background: var(--state-paid-soft); color: var(--state-paid-text); }
+
+    /* ---- 共用報到流程列 ---- */
+    .flow-grid {
+      margin-top: 30px; display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 18px; position: relative;
+    }
+    .flow-cell { position: relative; }
+    .flow-cell + .flow-cell::before {
+      content: "→"; position: absolute; left: -16px; top: 42%;
+      color: #b3a180; font-size: 16px; font-weight: 700;
+    }
+    .flow-cell .shot { max-width: none; }
+    .step-tag {
+      font-size: 11.5px; font-weight: 700; text-align: center; margin-bottom: 8px;
+      color: var(--muted-text); letter-spacing: .06em;
+    }
+    /* 已付清欄的直落虛線（免付款直達報到流程） */
+    .col-spine {
+      flex: 1; min-height: 46px; display: flex; flex-direction: column; align-items: center;
+      justify-content: center; gap: 10px; padding-top: 14px;
+    }
+
+    /* ---- 附屬頁 ---- */
+    .appendix { margin-top: 30px; display: flex; align-items: center; gap: 20px; }
+    .appendix .shot { max-width: 170px; opacity: .82; }
+    .appendix p { font-size: 13.5px; color: var(--muted-text); max-width: 420px; }
+
+    .assumption {
+      margin-top: 56px; font-size: 13px; color: var(--muted-text);
+      border-top: 1px solid var(--line); padding-top: 18px; max-width: 760px;
+    }
+
+    /* ---- 懸浮「回到最上層」 ---- */
+    .to-top {
+      position: fixed; right: 26px; bottom: 26px; z-index: 50;
+      width: 46px; height: 46px; border-radius: 999px; border: 0; cursor: pointer;
+      background: var(--accent); color: #fff; font-size: 20px;
+      display: grid; place-items: center; box-shadow: var(--shadow);
+      opacity: 0; pointer-events: none; transform: translateY(8px); transition: .25s;
+    }
+    .to-top.show { opacity: 1; pointer-events: auto; transform: none; }
+    .to-top:hover { background: #a0512e; }
+
+    /* ---- Lightbox（與畫廊一致） ---- */
+    .lb { position: fixed; inset: 0; z-index: 60; display: none;
+      background: rgba(42, 32, 20, .82); backdrop-filter: blur(4px);
+      align-items: center; justify-content: center; padding: 30px; }
+    .lb.open { display: flex; }
+    .lb img { max-width: 100%; max-height: 92vh; border-radius: 12px; box-shadow: 0 30px 80px -20px rgba(0,0,0,.6); }
+    .lb-close, .lb-nav {
+      position: absolute; border: 0; cursor: pointer; color: #fff;
+      background: rgba(255,255,255,.14); border-radius: 999px; width: 46px; height: 46px;
+      font-size: 22px; display: grid; place-items: center; transition: .15s;
+    }
+    .lb-close:hover, .lb-nav:hover { background: rgba(255,255,255,.28); }
+    .lb-close { top: 22px; right: 22px; }
+    .lb-nav.prev { left: 22px; top: 50%; transform: translateY(-50%); }
+    .lb-nav.next { right: 22px; top: 50%; transform: translateY(-50%); }
+    .lb-cap { position: absolute; bottom: 24px; left: 0; right: 0; text-align: center; color: #f3e9d6; font-size: 14px; }
+    @media (max-width: 560px) { .lb-nav { display: none; } }
+
+    @media (max-width: 900px) {
+      .entries, .branch { grid-template-columns: 1fr; }
+      .flow-grid { grid-template-columns: 1fr 1fr; }
+      .flow-cell + .flow-cell::before { content: ""; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="head-row">
+        <span class="top-pill">前台・旅客端</span>
+        <a class="gallery-link" href="index.html">設計稿畫廊 →</a>
+      </div>
+      <h1>自助報到流程總覽</h1>
+      <p class="lede">旅客有兩種進入方式，系統判斷付款狀態後分流：待付款者先完成付款、已付清者直接開始報到，付款完成後的報到流程完全相同。點任一張圖可放大檢視。</p>
+      <div class="legend">
+        <span><i class="dot unpaid"></i>待付款路徑</span>
+        <span><i class="dot paid"></i>已付款路徑</span>
+        <span><i class="dot na"></i>兩者共用</span>
+      </div>
+      <div class="device-tabs" role="tablist" aria-label="裝置版本">
+        <button class="device-tab" role="tab" aria-selected="true" data-device="mobile">手機版</button>
+        <button class="device-tab" role="tab" aria-selected="false" data-device="pc">電腦版</button>
+      </div>
+    </header>
+
+    <!-- STAGE 1 進入 -->
+    <section class="stage">
+      <div class="stage-head">
+        <span class="stage-no">STAGE 1</span>
+        <span class="stage-title">客人從哪裡進來</span>
+      </div>
+      <p class="stage-desc">入口只決定「怎麼找到訂單」：帶編號的免輸入，沒帶的先查詢。查詢成功後，兩條路走向完全相同。</p>
+
+      <div class="entries">
+        <div class="lane">
+          <div class="entry-card">
+            <h3>入口 A｜連結含訂單編號</h3>
+            <p>簡訊、Email 的專屬報到連結，系統直接認得訂單，客人不需輸入任何資料。</p>
+          </div>
+          <div class="lane-spine">
+            <div class="spine-line"></div>
+            <span class="spine-label">系統以編號自動帶出訂單</span>
+            <div class="spine-line"></div>
+            <span class="arrow-down">▼</span>
+          </div>
+        </div>
+
+        <div class="lane">
+          <div class="entry-card">
+            <h3>入口 B｜無訂單編號</h3>
+            <p>自行進入報到網址，先以「入住日期＋訂房人姓名」查詢訂單。</p>
+          </div>
+          <div class="lane-spine" style="flex:none; padding:14px 0;">
+            <span class="arrow-down">▼</span>
+          </div>
+          <div class="shot">
+            <figure>
+              <div class="img"><img src="assets/mobile/m02.png" alt="查詢訂單頁" /></div>
+              <figcaption><span class="page-no">頁 2</span><span class="page-name">查詢訂單</span></figcaption>
+            </figure>
+            <p class="cta-note">查詢成功後 <b>直接進入付款狀態判斷</b>，不再多一步</p>
+          </div>
+          <div class="lane-spine" style="flex:none; padding:10px 0 0;">
+            <span class="arrow-down">▼</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- STAGE 2 匯流 -->
+    <section class="stage" style="margin-top:8px;">
+      <div class="merge-bar">
+        <span class="diamond"></span>
+        <span class="t">付款狀態判斷</span>
+        <span class="s">兩個入口在此匯流——之後的畫面只跟訂單狀態有關，跟從哪進來無關</span>
+      </div>
+    </section>
+
+    <!-- STAGE 3 分狀態呈現 -->
+    <section class="stage" style="margin-top:34px;">
+      <div class="stage-head">
+        <span class="stage-no">STAGE 2</span>
+        <span class="stage-title">依付款狀態呈現</span>
+      </div>
+      <p class="stage-desc">同一張訂單卡，只換「狀態橫幅」和「主按鈕文字」。待付款的旅客先完成付款，付完款才開始報到；已付清的直接開始報到。</p>
+
+      <div class="branch">
+        <div class="state-col unpaid lane">
+          <span class="state-banner">● 待付款</span>
+          <div class="shot">
+            <figure>
+              <div class="img"><img src="assets/mobile/m01.png" alt="進入頁・待付款" /></div>
+              <figcaption><span class="page-no">頁 1</span><span class="page-name">進入頁・待付款</span></figcaption>
+            </figure>
+            <p class="cta-note">主按鈕：<b>前往付款報到</b></p>
+          </div>
+          <div class="lane-spine" style="flex:none; padding:12px 0;">
+            <span class="arrow-down">▼</span>
+          </div>
+          <div class="shot">
+            <figure>
+              <div class="img"><img src="assets/mobile/m04.png" alt="完成付款" /></div>
+              <figcaption><span class="page-no">頁 4</span><span class="page-name">完成付款</span></figcaption>
+            </figure>
+            <p class="cta-note">信用卡／LINE Pay／TWQR，<b>付款完成才開始報到</b></p>
+          </div>
+        </div>
+
+        <div class="state-col paid lane">
+          <span class="state-banner">✓ 已付清</span>
+          <div class="shot">
+            <figure>
+              <div class="img"><img src="assets/mobile/m03.png" alt="進入頁・已付款" /></div>
+              <figcaption><span class="page-no">頁 3</span><span class="page-name">進入頁・已付款</span></figcaption>
+            </figure>
+            <p class="cta-note">主按鈕：<b>開始自助報到</b></p>
+          </div>
+          <div class="col-spine">
+            <div class="spine-line"></div>
+            <span class="spine-label">免付款・直接進入報到流程</span>
+            <div class="spine-line"></div>
+            <span class="arrow-down">▼</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="merge-bar">
+        <span class="diamond"></span>
+        <span class="t">付款完成</span>
+        <span class="s">兩條路在此合流——之後的報到流程完全相同</span>
+      </div>
+    </section>
+
+    <!-- STAGE 4 共用報到流程 -->
+    <section class="stage">
+      <div class="stage-head">
+        <span class="stage-no">STAGE 3</span>
+        <span class="stage-title">自助報到流程（兩條路共用）</span>
+      </div>
+      <p class="stage-desc">此時訂單一定已是付款完成狀態。依序完成：確認訂單 → 上傳證件 → 住宿須知，最後取得門禁密碼、報到成功。</p>
+
+      <div class="flow-grid">
+        <div class="flow-cell">
+          <div class="step-tag">STEP 1</div>
+          <div class="shot"><figure>
+            <div class="img"><img src="assets/mobile/m05.png" alt="確認訂單" /></div>
+            <figcaption><span class="page-no">頁 5</span><span class="page-name">確認訂單</span></figcaption>
+          </figure></div>
+        </div>
+        <div class="flow-cell">
+          <div class="step-tag">STEP 2</div>
+          <div class="shot"><figure>
+            <div class="img"><img src="assets/mobile/m06.png" alt="上傳證件" /></div>
+            <figcaption><span class="page-no">頁 6</span><span class="page-name">上傳證件</span></figcaption>
+          </figure></div>
+        </div>
+        <div class="flow-cell">
+          <div class="step-tag">STEP 3</div>
+          <div class="shot"><figure>
+            <div class="img"><img src="assets/mobile/m07.png" alt="住宿須知" /></div>
+            <figcaption><span class="page-no">頁 7</span><span class="page-name">住宿須知</span></figcaption>
+          </figure></div>
+        </div>
+        <div class="flow-cell">
+          <div class="step-tag">STEP 4</div>
+          <div class="shot"><figure>
+            <div class="img"><img src="assets/mobile/m08.png" alt="報到成功" /></div>
+            <figcaption><span class="page-no">頁 8</span><span class="page-name">報到成功（門禁密碼）</span></figcaption>
+          </figure></div>
+        </div>
+      </div>
+
+      <div class="appendix">
+        <div class="shot"><figure>
+          <div class="img"><img src="assets/mobile/m09.png" alt="民宿資訊" /></div>
+          <figcaption><span class="page-no">頁 9</span><span class="page-name">民宿資訊</span></figcaption>
+        </figure></div>
+        <p>附屬頁面：報到成功後可隨時回來查看民宿資訊（交通、設施、聯絡方式），不在主流程的分岔邏輯內。</p>
+      </div>
+    </section>
+
+    <p class="assumption">※ 流程順序：待付款訂單須先完成付款，付款完成後才進入報到流程（確認訂單 → 上傳證件 → 住宿須知 → 報到成功）。例外狀態畫面（查無訂單、付款確認中等）將於下一版補充。</p>
+  </div>
+
+  <button class="to-top" id="toTop" aria-label="回到最上層">↑</button>
+
+  <div class="lb" id="lb" aria-hidden="true">
+    <button class="lb-close" id="lbClose" aria-label="關閉">✕</button>
+    <button class="lb-nav prev" id="lbPrev" aria-label="上一張">‹</button>
+    <img id="lbImg" alt="" />
+    <button class="lb-nav next" id="lbNext" aria-label="下一張">›</button>
+    <div class="lb-cap" id="lbCap"></div>
+  </div>
+
+  <script>
+    // 依頁面出現順序（＝流程順序）收集所有截圖，點圖放大、左右可切換
+    const figs = Array.from(document.querySelectorAll(".shot figure"));
+    const LIST = figs.map((fig) => {
+      const no = fig.querySelector(".page-no")?.textContent || "";
+      const name = fig.querySelector(".page-name")?.textContent || "";
+      return { src: fig.querySelector("img").src, cap: no + " · " + name };
+    });
+
+    const lb = document.getElementById("lb");
+    const lbImg = document.getElementById("lbImg");
+    const lbCap = document.getElementById("lbCap");
+    let lbIdx = 0;
+
+    function render() {
+      lbImg.src = LIST[lbIdx].src;
+      lbImg.alt = LIST[lbIdx].cap;
+      lbCap.textContent = (lbIdx + 1) + " / " + LIST.length + " · " + LIST[lbIdx].cap;
+    }
+    function openLb(i) { lbIdx = i; render(); lb.classList.add("open"); lb.setAttribute("aria-hidden", "false"); }
+    function closeLb() { lb.classList.remove("open"); lb.setAttribute("aria-hidden", "true"); }
+    function step(d) { lbIdx = (lbIdx + d + LIST.length) % LIST.length; render(); }
+
+    figs.forEach((fig, i) => fig.addEventListener("click", () => openLb(i)));
+    document.getElementById("lbClose").addEventListener("click", closeLb);
+    document.getElementById("lbPrev").addEventListener("click", (e) => { e.stopPropagation(); step(-1); });
+    document.getElementById("lbNext").addEventListener("click", (e) => { e.stopPropagation(); step(1); });
+    lb.addEventListener("click", (e) => { if (e.target === lb) closeLb(); });
+    document.addEventListener("keydown", (e) => {
+      if (!lb.classList.contains("open")) return;
+      if (e.key === "Escape") closeLb();
+      if (e.key === "ArrowLeft") step(-1);
+      if (e.key === "ArrowRight") step(1);
+    });
+
+    // 手機版 / 電腦版切換：同一套流程排版，只換截圖（m01–m09 ↔ p01–p09）
+    const deviceTabs = document.querySelectorAll(".device-tab");
+    function setDevice(kind) {
+      document.body.classList.toggle("pc", kind === "pc");
+      const prefix = kind === "pc" ? "p" : "m";
+      figs.forEach((fig) => {
+        const img = fig.querySelector("img");
+        img.src = img.src.replace(/assets\/(mobile|pc)\/[mp](\d\d\.png)$/, "assets/" + kind + "/" + prefix + "$2");
+      });
+      LIST.forEach((item, i) => { item.src = figs[i].querySelector("img").src; });
+      deviceTabs.forEach((t) => t.setAttribute("aria-selected", String(t.dataset.device === kind)));
+      if (lb.classList.contains("open")) render();
+    }
+    deviceTabs.forEach((t) => t.addEventListener("click", () => setDevice(t.dataset.device)));
+
+    // 懸浮「回到最上層」：往下捲才浮現
+    const toTop = document.getElementById("toTop");
+    window.addEventListener("scroll", () => toTop.classList.toggle("show", window.scrollY > 400), { passive: true });
+    toTop.addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
+  </script>
+</body>
+</html>
