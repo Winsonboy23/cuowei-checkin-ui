@@ -64,10 +64,12 @@
     .device-tab[aria-selected="true"] { background: var(--accent); color: #fff; border-color: transparent; box-shadow: var(--shadow); }
     .device-tab:not([aria-selected="true"]):hover { background: var(--accent-soft); color: #8a5233; }
 
-    /* 電腦版（橫式截圖）：圖放寬、流程列改 2×2 */
+    /* 電腦版（橫式截圖）：圖放寬、流程列改兩欄三行 */
     body.pc .shot { max-width: 470px; margin-left: auto; margin-right: auto; }
     body.pc .flow-grid { grid-template-columns: 1fr 1fr; row-gap: 26px; }
-    body.pc .flow-cell:nth-child(3)::before { content: ""; }
+    body.pc .flow-cell:nth-child(3)::before,
+    body.pc .flow-cell:nth-child(5)::before { content: ""; }
+    body.pc .flow-cell:nth-child(4)::before { content: "→"; }
     body.pc .appendix .shot { max-width: 320px; margin-left: 0; }
 
     /* ---- Stage ---- */
@@ -149,24 +151,36 @@
 
     /* ---- 共用報到流程列 ---- */
     .flow-grid {
-      margin-top: 30px; display: grid; grid-template-columns: repeat(4, 1fr);
-      gap: 18px; position: relative;
+      margin-top: 30px; display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 18px; row-gap: 30px; position: relative;
     }
     .flow-cell { position: relative; }
     .flow-cell + .flow-cell::before {
       content: "→"; position: absolute; left: -16px; top: 42%;
       color: #b3a180; font-size: 16px; font-weight: 700;
     }
-    .flow-cell .shot { max-width: none; }
+    .flow-cell:nth-child(4)::before { content: ""; }  /* 第二行行首不畫箭頭 */
+    .flow-cell .shot { max-width: 258px; margin: 0 auto; }
     .step-tag {
       font-size: 11.5px; font-weight: 700; text-align: center; margin-bottom: 8px;
       color: var(--muted-text); letter-spacing: .06em;
     }
-    /* 已付清欄的直落虛線（免付款直達報到流程） */
-    .col-spine {
-      flex: 1; min-height: 46px; display: flex; flex-direction: column; align-items: center;
-      justify-content: center; gap: 10px; padding-top: 14px;
+    .flow-cell.pay .step-tag { color: var(--state-unpaid-text); }
+    .flow-cell.pay .shot figure { border: 1.5px solid var(--state-unpaid); }
+    .pay-chip {
+      position: absolute; top: 30px; left: 50%; transform: translateX(-50%); z-index: 2;
+      font-size: 11.5px; font-weight: 700; color: #fff; background: var(--state-unpaid);
+      padding: 3px 11px; border-radius: 999px; white-space: nowrap; box-shadow: var(--shadow);
     }
+    /* 電腦版稿尚未提供的頁面：切到電腦版時顯示佔位卡 */
+    .pc-pending {
+      display: none; min-height: 220px; border: 1.5px dashed #cbbfa4; border-radius: 16px;
+      flex-direction: column; align-items: center; justify-content: center; gap: 6px;
+      color: var(--muted-text); font-size: 14.5px; font-weight: 600; text-align: center;
+    }
+    .pc-pending span { font-size: 12.5px; font-weight: 400; }
+    body.pc .nopc .shot { display: none; }
+    body.pc .nopc .pc-pending { display: flex; }
 
     /* ---- 附屬頁 ---- */
     .appendix { margin-top: 30px; display: flex; align-items: center; gap: 20px; }
@@ -210,7 +224,8 @@
     @media (max-width: 900px) {
       .entries, .branch { grid-template-columns: 1fr; }
       .flow-grid { grid-template-columns: 1fr 1fr; }
-      .flow-cell + .flow-cell::before { content: ""; }
+      .flow-cell + .flow-cell::before,
+      body.pc .flow-cell:nth-child(4)::before { content: ""; }
     }
   </style>
 </head>
@@ -222,7 +237,7 @@
         <a class="gallery-link" href="index.html">設計稿畫廊 →</a>
       </div>
       <h1>自助報到流程總覽</h1>
-      <p class="lede">旅客有兩種進入方式，系統判斷付款狀態後分流：待付款者先完成付款、已付清者直接開始報到，付款完成後的報到流程完全相同。點任一張圖可放大檢視。</p>
+      <p class="lede">旅客有兩種進入方式，系統判斷付款狀態後顯示對應畫面；兩種狀態都直接開始自助報到，差別只在流程最後是否需要付款（款項於報到最後一步收取）。點任一張圖可放大檢視。</p>
       <div class="legend">
         <span><i class="dot unpaid"></i>待付款路徑</span>
         <span><i class="dot paid"></i>已付款路徑</span>
@@ -259,7 +274,7 @@
         <div class="lane">
           <div class="entry-card">
             <h3>入口 B｜無訂單編號</h3>
-            <p>自行進入報到網址，先以「入住日期＋訂房人姓名」查詢訂單。</p>
+            <p>自行進入報到網址，以「入住日期＋訂房人姓名＋訂單編號」查詢訂單。</p>
           </div>
           <div class="lane-spine" style="flex:none; padding:14px 0;">
             <span class="arrow-down">▼</span>
@@ -293,7 +308,7 @@
         <span class="stage-no">STAGE 2</span>
         <span class="stage-title">依付款狀態呈現</span>
       </div>
-      <p class="stage-desc">同一張訂單卡，只換「狀態橫幅」和「主按鈕文字」。待付款的旅客先完成付款，付完款才開始報到；已付清的直接開始報到。</p>
+      <p class="stage-desc">同一張訂單卡，只換「狀態橫幅」和提示文字。兩種狀態的主按鈕都是「開始自助報到」——差別在流程最後：待付款訂單多一步付款，款項於報到最後一步收取。</p>
 
       <div class="branch">
         <div class="state-col unpaid lane">
@@ -303,17 +318,7 @@
               <div class="img"><img src="assets/mobile/m01.png" alt="進入頁・待付款" /></div>
               <figcaption><span class="page-no">頁 1</span><span class="page-name">進入頁・待付款</span></figcaption>
             </figure>
-            <p class="cta-note">主按鈕：<b>前往付款報到</b></p>
-          </div>
-          <div class="lane-spine" style="flex:none; padding:12px 0;">
-            <span class="arrow-down">▼</span>
-          </div>
-          <div class="shot">
-            <figure>
-              <div class="img"><img src="assets/mobile/m04.png" alt="完成付款" /></div>
-              <figcaption><span class="page-no">頁 4</span><span class="page-name">完成付款</span></figcaption>
-            </figure>
-            <p class="cta-note">信用卡／LINE Pay／TWQR，<b>付款完成才開始報到</b></p>
+            <p class="cta-note">主按鈕：<b>開始自助報到</b>（註明款項於最後一步收取）</p>
           </div>
         </div>
 
@@ -324,21 +329,15 @@
               <div class="img"><img src="assets/mobile/m03.png" alt="進入頁・已付款" /></div>
               <figcaption><span class="page-no">頁 3</span><span class="page-name">進入頁・已付款</span></figcaption>
             </figure>
-            <p class="cta-note">主按鈕：<b>開始自助報到</b></p>
-          </div>
-          <div class="col-spine">
-            <div class="spine-line"></div>
-            <span class="spine-label">免付款・直接進入報到流程</span>
-            <div class="spine-line"></div>
-            <span class="arrow-down">▼</span>
+            <p class="cta-note">主按鈕：<b>開始自助報到</b>（流程中不出現付款步驟）</p>
           </div>
         </div>
       </div>
 
       <div class="merge-bar">
         <span class="diamond"></span>
-        <span class="t">付款完成</span>
-        <span class="s">兩條路在此合流——之後的報到流程完全相同</span>
+        <span class="t">開始自助報到</span>
+        <span class="s">兩條路進入相同的報到流程——待辦清單依付款狀態顯示 4 項或 3 項</span>
       </div>
     </section>
 
@@ -348,35 +347,51 @@
         <span class="stage-no">STAGE 3</span>
         <span class="stage-title">自助報到流程（兩條路共用）</span>
       </div>
-      <p class="stage-desc">此時訂單一定已是付款完成狀態。依序完成：確認訂單 → 上傳證件 → 住宿須知，最後取得門禁密碼、報到成功。</p>
+      <p class="stage-desc">五步流程：確認訂單 → 旅客資料 → 上傳證件 → 住宿須知 → 付款（僅待付款訂單）→ 報到完成。已付清訂單自動略過付款，待辦共 3 項。</p>
 
       <div class="flow-grid">
         <div class="flow-cell">
           <div class="step-tag">STEP 1</div>
           <div class="shot"><figure>
             <div class="img"><img src="assets/mobile/m05.png" alt="確認訂單" /></div>
-            <figcaption><span class="page-no">頁 5</span><span class="page-name">確認訂單</span></figcaption>
+            <figcaption><span class="page-no">頁 4</span><span class="page-name">確認訂單</span></figcaption>
           </figure></div>
         </div>
-        <div class="flow-cell">
+        <div class="flow-cell nopc">
           <div class="step-tag">STEP 2</div>
+          <div class="shot"><figure>
+            <div class="img"><img src="assets/mobile/m10.png" alt="旅客資料" /></div>
+            <figcaption><span class="page-no">頁 5</span><span class="page-name">旅客資料</span></figcaption>
+          </figure></div>
+          <div class="pc-pending">旅客資料<br /><span>電腦版稿更新中</span></div>
+        </div>
+        <div class="flow-cell">
+          <div class="step-tag">STEP 3</div>
           <div class="shot"><figure>
             <div class="img"><img src="assets/mobile/m06.png" alt="上傳證件" /></div>
             <figcaption><span class="page-no">頁 6</span><span class="page-name">上傳證件</span></figcaption>
           </figure></div>
         </div>
         <div class="flow-cell">
-          <div class="step-tag">STEP 3</div>
+          <div class="step-tag">STEP 4</div>
           <div class="shot"><figure>
             <div class="img"><img src="assets/mobile/m07.png" alt="住宿須知" /></div>
             <figcaption><span class="page-no">頁 7</span><span class="page-name">住宿須知</span></figcaption>
           </figure></div>
         </div>
-        <div class="flow-cell">
-          <div class="step-tag">STEP 4</div>
+        <div class="flow-cell pay">
+          <div class="step-tag">STEP 5・僅待付款</div>
+          <span class="pay-chip">已付清自動跳過</span>
           <div class="shot"><figure>
-            <div class="img"><img src="assets/mobile/m08.png" alt="報到成功" /></div>
-            <figcaption><span class="page-no">頁 8</span><span class="page-name">報到成功（門禁密碼）</span></figcaption>
+            <div class="img"><img src="assets/mobile/m04.png" alt="付款" /></div>
+            <figcaption><span class="page-no">頁 8</span><span class="page-name">付款</span></figcaption>
+          </figure></div>
+        </div>
+        <div class="flow-cell">
+          <div class="step-tag">完成</div>
+          <div class="shot"><figure>
+            <div class="img"><img src="assets/mobile/m08.png" alt="報到完成" /></div>
+            <figcaption><span class="page-no">頁 9</span><span class="page-name">報到完成（門禁密碼）</span></figcaption>
           </figure></div>
         </div>
       </div>
@@ -384,13 +399,13 @@
       <div class="appendix">
         <div class="shot"><figure>
           <div class="img"><img src="assets/mobile/m09.png" alt="民宿資訊" /></div>
-          <figcaption><span class="page-no">頁 9</span><span class="page-name">民宿資訊</span></figcaption>
+          <figcaption><span class="page-no">頁 10</span><span class="page-name">民宿資訊</span></figcaption>
         </figure></div>
-        <p>附屬頁面：報到成功後可隨時回來查看民宿資訊（交通、設施、聯絡方式），不在主流程的分岔邏輯內。</p>
+        <p>附屬頁面：三個進入頁與報到完成頁都有「民宿資訊」入口，抵達前後隨時可查看時間、地址、交通與常見問題，不在主流程的分岔邏輯內。</p>
       </div>
     </section>
 
-    <p class="assumption">※ 流程順序：待付款訂單須先完成付款，付款完成後才進入報到流程（確認訂單 → 上傳證件 → 住宿須知 → 報到成功）。例外狀態畫面（查無訂單、付款確認中等）將於下一版補充。</p>
+    <p class="assumption">※ 流程順序：確認訂單 → 旅客資料 → 上傳證件 → 住宿須知 → 付款 → 報到完成；付款為最後一步、僅待付款訂單需要，已付清訂單自動略過（待辦顯示 3 項）。電腦版設計稿仍為舊版流程，「旅客資料」頁電腦版稿更新後即可補上。例外狀態畫面（查無訂單、付款確認中等）將於下一版補充。</p>
   </div>
 
   <button class="to-top" id="toTop" aria-label="回到最上層">↑</button>
@@ -444,6 +459,7 @@
       document.body.classList.toggle("pc", kind === "pc");
       const prefix = kind === "pc" ? "p" : "m";
       figs.forEach((fig) => {
+        if (fig.closest(".nopc")) return; // 旅客資料尚無電腦版稿，保持手機版檔
         const img = fig.querySelector("img");
         img.src = img.src.replace(/assets\/(mobile|pc)\/[mp](\d\d\.png)$/, "assets/" + kind + "/" + prefix + "$2");
       });
