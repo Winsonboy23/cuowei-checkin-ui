@@ -218,7 +218,7 @@
     <div class="tabs-inner" role="tablist" aria-label="介面分類">
       <button class="tab" role="tab" aria-selected="true"  data-group="front">前台</button>
       <button class="tab" role="tab" aria-selected="false" data-group="admin">後台<span class="count">18</span></button>
-      <a class="pill pill-cta" href="flow.html">報到流程總覽 →</a>
+      <a class="pill pill-cta" id="flowlink" href="flow.html">報到流程總覽 →</a>
       <!-- 暫時隱藏：設計系統入口（要恢復時取消此註解即可）
       <a class="pill pill-cta" href="design-system/styleguide.html">設計系統 →</a>
       -->
@@ -386,6 +386,7 @@
     const primaryTabs = document.querySelectorAll(".tab[data-group]");
     const subTabs = document.querySelectorAll(".subtab[data-panel]");
     const subtabsBar = document.getElementById("subtabs");
+    const flowLink = document.getElementById("flowlink");
     let frontPanel = "mobile"; // 記住前台最後選的裝置
 
     function showPanel(id) {
@@ -395,6 +396,7 @@
     function selectGroup(group) {
       primaryTabs.forEach((t) => t.setAttribute("aria-selected", t.dataset.group === group));
       subtabsBar.style.display = group === "front" ? "" : "none";
+      flowLink.style.display = group === "front" ? "" : "none"; // 流程總覽僅前台適用
       showPanel(group === "front" ? frontPanel : "admin");
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
