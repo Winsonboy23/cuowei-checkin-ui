@@ -128,6 +128,14 @@
       justify-content: center;
     }
     .grid.admin .thumb img { height: 100%; object-fit: contain; object-position: top center; }
+    figure.pending { cursor: default; }
+    figure.pending:hover { transform: none; border-color: var(--line); }
+    .pending-note {
+      flex: 1; align-self: stretch; margin-bottom: 14px;
+      display: grid; place-items: center;
+      border: 1px dashed var(--line); border-radius: 12px;
+      font-size: 13px; color: var(--muted-text);
+    }
 
     /* ---- 後台分節（依側邊欄資訊架構） ---- */
     .jumpbar { display: flex; flex-wrap: wrap; gap: 8px; margin: 6px 0 4px; }
@@ -308,11 +316,11 @@
         ["a12", "訂房與客服"],
         ["a19", "外部連結"],
       ]},
-      // Email 通知為 1527px 三欄長頁，與館別設定其餘分頁比例差異大，另立一節
-      { name: "Email 通知設定", ar: "1514 / 1527", items: [
+      // Email 通知版型與館別設定其餘分頁比例差異大，另立一節；id 留空 = 尚未提供設計稿
+      { name: "Email 通知設定", ar: "873 / 964", items: [
         ["a13", "入住通知信"],
         ["a24", "證件補件提醒"],
-        ["a25", "報到完成信"],
+        ["", "報到完成信"],
       ]},
       // 信件範本為 667px 直式版型，與後台截圖比例差異大，另立一節設比例框
       { name: "Email 信件範本", ar: "667 / 1172", items: [
@@ -372,13 +380,15 @@
         sec.items.forEach(([id, title, modal]) => {
           const i = idx++;
           const fig = document.createElement("figure");
+          if (!id) fig.className = "pending";
           fig.innerHTML =
-            '<div class="thumb"><img loading="lazy" src="assets/admin/' + id +
-            '.png" alt="' + title + '"></div>' +
+            '<div class="thumb">' + (id
+              ? '<img loading="lazy" src="assets/admin/' + id + '.png" alt="' + title + '">'
+              : '<span class="pending-note">設計稿待補</span>') + '</div>' +
             '<figcaption><span class="no">' + String(i + 1).padStart(2, "0") +
             '</span><span class="t">' + title + '</span>' +
             (modal ? '<span class="tag-modal">彈窗</span>' : '') + '</figcaption>';
-          fig.addEventListener("click", () => openLb("admin", i));
+          if (id) fig.addEventListener("click", () => openLb("admin", i));
           grid.appendChild(fig);
         });
         wrap.appendChild(grid);
@@ -429,7 +439,11 @@
 
     function openLb(kind, i) { lbKind = kind; lbIdx = i; render(); lb.classList.add("open"); lb.setAttribute("aria-hidden", "false"); }
     function closeLb() { lb.classList.remove("open"); lb.setAttribute("aria-hidden", "true"); }
-    function step(d) { const list = DATA[lbKind]; lbIdx = (lbIdx + d + list.length) % list.length; render(); }
+    function step(d) {
+      const list = DATA[lbKind];
+      do { lbIdx = (lbIdx + d + list.length) % list.length; } while (!list[lbIdx][0]); // 跳過待補空位
+      render();
+    }
     function render() {
       const [id, title] = DATA[lbKind][lbIdx];
       lbImg.src = "assets/" + lbKind + "/" + id + ".png";
